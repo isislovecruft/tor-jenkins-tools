@@ -1,0 +1,57 @@
+#!/bin/sh
+
+set -e
+set -x
+set -u
+
+case "${SUITE:-}" in
+	lucid|\
+	natty|\
+	oneiric|\
+	precise|\
+	quantal|\
+	squeeze|\
+	wheezy|\
+	sid)
+		suite="$SUITE"
+		;;
+	*)
+		if [ -z "${SUITE:-}" ]; then
+			echo >&2 "No suite given"
+		else
+			echo >&2 "Invalid suite: $SUITE"
+		fi
+		exit 1
+esac
+
+case "${ARCHITECTURE:-}" in
+	amd64|\
+	i386)
+		arch="$ARCHITECTURE"
+		;;
+	*)
+		if [ -z "${ARCHITECTURE:-}" ]; then
+			echo >&2 "No arch given"
+		else
+			echo >&2 "Invalid arch: $ARCHITECTURE"
+		fi
+		exit 1
+esac
+
+
+echo "Prepare build environment"
+schroot-wrapper setup "$suite-$arch-sbuild"
+echo "Update package list"
+schroot-wrapper "rootrun" -- "sh" "-c" "(for i in 1 2 3 4 5; do apt-get update && exit 0; sleep 30; done); mkdir -m 0755 -p /usr/share/aclocal"
+echo "Install build dependencies"
+schroot-wrapper "rootrun" -- apt-get install -y autoconf automake libssl-dev zlib1g-dev libevent-dev asciidoc docbook-xml docbook-xsl xmlto
+echo "Run autogen"
+schroot-wrapper "run" -- ./autogen.sh
+echo "Run configure"
+schroot-wrapper "run" -- ./configure --enable-gcc-warnings
+echo "Run make"
+schroot-wrapper "run" -- make -k
+echo "Run test suite"
+schroot-wrapper "run" -- make -k check
+echo "Clean up build environment"
+schroot-wrapper "cleanup"
