@@ -44,7 +44,7 @@ schroot-wrapper setup "$suite-$arch-sbuild"
 echo "Update package list"
 schroot-wrapper "rootrun" -- "sh" "-c" "(for i in 1 2 3 4 5; do apt-get update && exit 0; sleep 30; done); mkdir -m 0755 -p /usr/share/aclocal"
 #echo "Install build dependencies"
-#schroot-wrapper "rootrun" -- apt-get install -y autoconf automake libssl-dev zlib1g-dev libevent-dev asciidoc docbook-xml docbook-xsl xmlto
+schroot-wrapper "rootrun" -- apt-get install -y python
 echo "Run setup.py"
 schroot-wrapper "run" -- python setup.py install
 echo "Clean up build environment"
