@@ -1,0 +1,7 @@
+#!/bin/sh
+set -x
+set -e
+
+rm -rf build
+python setup.py build
+python ./run_tests.py --unit
