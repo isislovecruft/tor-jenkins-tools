@@ -10,4 +10,6 @@ if ! [ -e "$bd" ]; then
 	exit 1
 fi
 
-apt-get install -y -- $(cat "$bd")
+apt-get install -y eatmydata || true
+if command -v eatmydata > /dev/null; then prefix=eatmydata; else prefix=""; fi
+$prefix apt-get install -y -- $(cat "$bd")
