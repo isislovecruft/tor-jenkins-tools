@@ -36,7 +36,7 @@ schroot-wrapper "rootrun" -- apt-get install -y autoconf automake libssl-dev zli
 echo "Run autogen"
 schroot-wrapper "run" -- ./autogen.sh
 echo "Run configure"
-schroot-wrapper "run" -- ./configure --enable-gcc-warnings
+schroot-wrapper "run" -- ./configure --enable-gcc-warnings --disable-silent-rules
 echo "Run make"
 schroot-wrapper "run" -- make -k
 echo "Run test suite"
