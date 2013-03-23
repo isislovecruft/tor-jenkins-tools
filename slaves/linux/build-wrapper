@@ -58,9 +58,9 @@ fi
 
 echo "Setup:"
 f="$jobdir/setup"
-if [ -d "$f" ]; then schroot --run-session --chroot "$chroot" -u root -- run-parts "$f";
-                else schroot --run-session --chroot "$chroot" -u root -- "$f"; fi
+if [ -d "$f" ]; then schroot --run-session --chroot "$chroot" -u root -- env SUITE="$SUITE" run-parts "$f";
+                else schroot --run-session --chroot "$chroot" -u root -- env SUITE="$SUITE" "$f"; fi
 echo "Build:"
 f="$jobdir/build"
-if [ -d "$f" ]; then schroot --run-session --chroot "$chroot"         -- run-parts "$f";
-                else schroot --run-session --chroot "$chroot"         -- "$f"; fi
+if [ -d "$f" ]; then schroot --run-session --chroot "$chroot"         -- env SUITE="$SUITE" run-parts "$f";
+                else schroot --run-session --chroot "$chroot"         -- env SUITE="$SUITE" "$f"; fi
