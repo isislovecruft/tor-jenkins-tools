@@ -4,42 +4,44 @@ set -e
 set -x
 set -u
 
-check_arg() {
-	name="$1"; shift
-	arg="$1"; shift
+# Stuff that is run in the chroot as root
+setup() {
+	echo "Update package list"
+	for i in 1 2 3 4 5; do
+		apt-get update && break;
+		sleep 30;
+	done;
+	#mkdir -m 0755 -p /usr/share/aclocal
 
-	if [ -z "${arg:-}" ]; then
-		echo >&2 "No $name given"
-		exit 1
-	fi
-	if [[ "$arg" =~ [^a-z0-9] ]]; then
-		echo >&2 "Invalid $name: $arg"
-		exit 1
-	fi
+	echo "Install build dependencies"
+	apt-get install -y autoconf automake libssl-dev zlib1g-dev libevent-dev asciidoc docbook-xml docbook-xsl xmlto
 }
 
-check_arg "suite" "${SUITE:-}"
-check_arg "architecture" "${ARCHITECTURE:-}"
+# Stuff that is run in the chroot as user
+run() {
+	echo "Run autogen"
+	./autogen.sh
 
-chroot="$SUITE-$ARCHITECTURE-sbuild"
-if ! schroot -l -c "$chroot" > /dev/null 2>&1; then
-	echo >&2 "Invalid chroot: $chroot"
-	exit 1
-fi
+	echo "Run configure"
+	./configure --enable-gcc-warnings --disable-silent-rules
 
-echo "Prepare build environment"
-schroot-wrapper setup "$chroot"
-echo "Update package list"
-schroot-wrapper "rootrun" -- "sh" "-c" "(for i in 1 2 3 4 5; do apt-get update && exit 0; sleep 30; done); mkdir -m 0755 -p /usr/share/aclocal"
-echo "Install build dependencies"
-schroot-wrapper "rootrun" -- apt-get install -y autoconf automake libssl-dev zlib1g-dev libevent-dev asciidoc docbook-xml docbook-xsl xmlto
-echo "Run autogen"
-schroot-wrapper "run" -- ./autogen.sh
-echo "Run configure"
-schroot-wrapper "run" -- ./configure --enable-gcc-warnings --disable-silent-rules
-echo "Run make"
-schroot-wrapper "run" -- make -k
-echo "Run test suite"
-schroot-wrapper "run" -- make -k check
-echo "Clean up build environment"
-schroot-wrapper "cleanup"
+	echo "Run make"
+	make -k
+
+	echo "Run test suite"
+	make -k check
+}
+
+
+
+fullpath=$(readlink -f "$0")
+dir=$(dirname "$fullpath")
+common="$dir/../build-wrapper.common"
+for common in "$dir/../build-wrapper.common" "$dir/build-wrapper.common"; do
+	if [ -e "$common" ]; then
+		. "$common"
+		exit 0
+	fi
+done
+echo >&2 "build-wrapper.common not found."
+exit 1

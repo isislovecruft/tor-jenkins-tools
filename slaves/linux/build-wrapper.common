@@ -1,0 +1,60 @@
+#!/bin/bash
+
+check_arg() {
+	name="$1"; shift
+	arg="$1"; shift
+
+	if [ -z "${arg:-}" ]; then
+		echo >&2 "No $name given"
+		exit 1
+	fi
+	if [[ "$arg" =~ [^a-z0-9] ]]; then
+		echo >&2 "Invalid $name: $arg"
+		exit 1
+	fi
+}
+cleanup() {
+	if ! [ -z "{$chroot:-}" ]; then
+		echo "Clean up build environment"
+		schroot --end-session --chroot "$chroot"
+	fi
+}
+
+# run outside chroot.  Sets up the chroot, calls the setup and run phases, and cleans up.
+master() {
+	check_arg "suite" "${SUITE:-}"
+	check_arg "architecture" "${ARCHITECTURE:-}"
+
+	base_chroot="$SUITE-$ARCHITECTURE-sbuild"
+	if ! schroot -l -c "$base_chroot" > /dev/null 2>&1; then
+		echo >&2 "Invalid chroot: $base_chroot"
+		exit 1
+	fi
+
+	trap 'cleanup' EXIT
+
+	echo "Prepare build environment"
+	chroot=$(schroot --chroot "$base_chroot" --begin-session)
+	if [ -z "$chroot" ]; then
+		echo >&2 "Setting up chroot failed."
+		exit 1
+	fi
+
+	schroot --run-session --chroot "$chroot" -u root -- "$0" setup
+	schroot --run-session --chroot "$chroot"         -- "$0" run
+}
+
+case "${1:-}" in
+	"")
+		master
+		;;
+	"setup")
+		setup
+		;;
+	"run")
+		run
+		;;
+	*)
+		echo >&2 "Invalid argument: $1."
+		exit 1
+esac
