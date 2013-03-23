@@ -44,7 +44,12 @@ schroot-wrapper setup "$suite-$arch-sbuild"
 echo "Update package list"
 schroot-wrapper "rootrun" -- "sh" "-c" "(for i in 1 2 3 4 5; do apt-get update && exit 0; sleep 30; done); mkdir -m 0755 -p /usr/share/aclocal"
 echo "Install build dependencies"
-schroot-wrapper "rootrun" -- apt-get install -y python pyflakes
+if [ "${SUITE}" = "natty" ]
+then
+    schroot-wrapper "rootrun" -- apt-get install -y python
+else
+    schroot-wrapper "rootrun" -- apt-get install -y python pyflakes
+fi
 echo "Cleanup build dir"
 schroot-wrapper "run" -- rm -rf build
 echo "Run setup.py"
