@@ -4,45 +4,44 @@ set -e
 set -x
 set -u
 
-check_arg() {
-	name="$1"; shift
-	arg="$1"; shift
+# Stuff that is run in the chroot as root
+setup() {
+	echo "Update package list"
+	for i in 1 2 3 4 5; do
+		apt-get update && break;
+		sleep 30;
+	done;
 
-	if [ -z "${arg:-}" ]; then
-		echo >&2 "No $name given"
-		exit 1
-	fi
-	if [[ "$arg" =~ [^a-z0-9] ]]; then
-		echo >&2 "Invalid $name: $arg"
-		exit 1
+	echo "Install build dependencies"
+	if [ "${SUITE}" = "natty" ]; then
+		apt-get install -y python
+	else
+		apt-get install -y python pyflakes
 	fi
 }
 
-check_arg "suite" "${SUITE:-}"
-check_arg "architecture" "${ARCHITECTURE:-}"
+# Stuff that is run in the chroot as user
+run() {
+	echo "Cleanup build dir"
+	rm -rf build
 
-chroot="$SUITE-$ARCHITECTURE-sbuild"
-if ! schroot -l -c "$chroot" > /dev/null 2>&1; then
-	echo >&2 "Invalid chroot: $chroot"
-	exit 1
-fi
+	echo "Run setup.py"
+	python setup.py build
 
-echo "Prepare build environment"
-schroot-wrapper setup "$chroot"
-echo "Update package list"
-schroot-wrapper "rootrun" -- "sh" "-c" "(for i in 1 2 3 4 5; do apt-get update && exit 0; sleep 30; done)"
-echo "Install build dependencies"
-if [ "${SUITE}" = "natty" ]
-then
-	schroot-wrapper "rootrun" -- apt-get install -y python
-else
-	schroot-wrapper "rootrun" -- apt-get install -y python pyflakes
-fi
-echo "Cleanup build dir"
-schroot-wrapper "run" -- rm -rf build
-echo "Run setup.py"
-schroot-wrapper "run" -- python setup.py build
-echo "Run unittests"
-schroot-wrapper "run" -- python ./run_tests.py --unit
-echo "Clean up build environment"
-schroot-wrapper "cleanup"
+	echo "Run unittests"
+	python ./run_tests.py --unit
+}
+
+
+
+fullpath=$(readlink -f "$0")
+dir=$(dirname "$fullpath")
+common="$dir/../build-wrapper.common"
+for common in "$dir/../build-wrapper.common" "$dir/build-wrapper.common"; do
+	if [ -e "$common" ]; then
+		. "$common"
+		exit 0
+	fi
+done
+echo >&2 "build-wrapper.common not found."
+exit 1
