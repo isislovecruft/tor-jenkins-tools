@@ -3,5 +3,4 @@ set -x
 set -e
 
 rm -rf build
-python ./run_tests.py --unit
-python ./run_tests.py --tor src/or/tor --integ --target RUN_ALL
+python ./run_tests.py --all --tor src/or/tor --target RUN_ALL
