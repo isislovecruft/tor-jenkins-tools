@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 set -x
@@ -6,10 +6,11 @@ set -x
 # replace symlinks with copies of files.  As long as there are no chains
 # this should work
 git="/c/Program Files (x86)/Git/bin/git"
-for f in `"$git" ls-files -s | awk '$1==120000 {print $4}'`; do
-  t="`cat "$f"`"
+for f in $("$git" ls-files -s | awk '$1==120000 {print $4}'); do
+  t="$(cat "$f")"
+  dir="$(dirname "$t")"
   rm -fv "$f"
-  cp -v "$t" "$f"
+  cp -v "$dir/$t" "$f"
 done
 
 ./Configure no-idea no-rc5 no-mdc2 mingw
