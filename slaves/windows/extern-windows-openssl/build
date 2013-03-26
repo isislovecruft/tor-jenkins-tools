@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+set -x
+
+# replace symlinks with copies of files.  As long as there are no chains
+# this should work
+git="/c/Program Files (x86)/Git/bin/git"
+for f in `"$git" ls-files -s | awk '$1==120000 {print $4}'`; do
+  t="`cat "$f"`"
+  rm -fv "$f"
+  cp -v "$t" "$f"
+done
+
+./Configure no-idea no-rc5 no-mdc2 mingw
+make depend
+make
+make test
+make INSTALL_PREFIX="`pwd`"/RESULT install
+tar czf RESULT.tar.gz RESULT
