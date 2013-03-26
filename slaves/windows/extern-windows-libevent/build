@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+set -x
+
+./configure --enable-static --disable-shared
+make
+make check
+make DESTDIR="`pwd`/RESULT" install
+tar czf RESULT.tar.gz RESULT

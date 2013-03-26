@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+set -x
+
+make -f win32/makefile.gcc
+make -f win32/makefile.gcc DESTDIR="`pwd`/RESULT" install
+tar czf RESULT.tar.gz RESULT
