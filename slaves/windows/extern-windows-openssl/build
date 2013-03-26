@@ -8,7 +8,7 @@ set -x
 git="/c/Program Files (x86)/Git/bin/git"
 for f in $("$git" ls-files -s | awk '$1==120000 {print $4}'); do
   t="$(cat "$f")"
-  dir="$(dirname "$t")"
+  dir="$(dirname "$f")"
   rm -fv "$f"
   cp -v "$dir/$t" "$f"
 done
