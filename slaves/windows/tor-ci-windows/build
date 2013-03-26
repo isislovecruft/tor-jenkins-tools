@@ -17,4 +17,4 @@ for i in libevent openssl zlib; do tar xavf "RESULT-$i.tar.gz"; done
 make
 make check
 make DESTDIR="`pwd`/RESULT-tor" install
-tar czf RESULT-tor RESULT-tor
+tar caf RESULT-tor.tar.gz RESULT-tor
