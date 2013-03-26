@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+set -x
+
+for i in libevent openssl zlib; do tar xavf "RESULT-$i.tar.gz"; done
+
+./autogen.sh
+./configure \
+	--with-libevent-dir=./RESULT-libevent/usr/local \
+	--with-openssl-dir=./RESULT-openssl/usr/local/ssl \
+	--with-zlib-dir=./RESULT-zlib \
+	--enable-gcc-warnings \
+	--disable-silent-rules \
+	--disable-asciidoc \
+	CFLAGS='-g -O2 -Wno-error=redundant-decls'
+make
+make check
+make DESTDIR="`pwd`/RESULT-tor" install
+tar czf RESULT-tor RESULT-tor
