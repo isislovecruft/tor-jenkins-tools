@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x
 
 # replace symlinks with copies of files.  As long as there are no chains
 # this should work
@@ -13,8 +12,9 @@ for f in $("$git" ls-files -s | awk '$1==120000 {print $4}'); do
   cp -v "$dir/$t" "$f"
 done
 
+set -x
 ./Configure no-idea no-rc5 no-mdc2 mingw
-make depend
+make depend # if you get weird build errors, make sure git's core.autocrlf is not set to true
 make
 make test
 make INSTALL_PREFIX="`pwd`"/RESULT install
