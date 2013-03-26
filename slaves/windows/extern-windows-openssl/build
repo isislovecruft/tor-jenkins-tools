@@ -17,5 +17,5 @@ set -x
 make depend # if you get weird build errors, make sure git's core.autocrlf is not set to true
 make
 make test
-make INSTALL_PREFIX="`pwd`"/RESULT install
-tar czf RESULT.tar.gz RESULT
+make INSTALL_PREFIX="`pwd`"/RESULT-openssl install
+tar czf RESULT-openssl.tar.gz RESULT-openssl

@@ -4,5 +4,5 @@ set -e
 set -x
 
 make -f win32/makefile.gcc
-make -f win32/makefile.gcc DESTDIR="`pwd`/RESULT" install
-tar czf RESULT.tar.gz RESULT
+make -f win32/makefile.gcc DESTDIR="`pwd`/RESULT-zlib" install
+tar czf RESULT-zlib.tar.gz RESULT-zlib
