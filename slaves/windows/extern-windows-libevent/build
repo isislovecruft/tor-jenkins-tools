@@ -3,6 +3,7 @@
 set -e
 set -x
 
+./autogen.sh # if we do not run a fresh autogen, libevent-2.0.21-stable will not build
 ./configure --enable-static --disable-shared
 make
 make check
