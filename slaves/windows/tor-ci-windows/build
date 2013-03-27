@@ -21,5 +21,5 @@ PATH="`pwd`/UPSTREAM/usr/bin:$PATH" \
 	CFLAGS='-g -O2 -Wno-error=redundant-decls'
 make
 PATH="`pwd`/UPSTREAM/usr/bin:$PATH" make check
-make DESTDIR="`pwd`/RESULTr" install
+make DESTDIR="`pwd`/RESULT" install
 tar caf RESULT.tor.tar.gz RESULT
