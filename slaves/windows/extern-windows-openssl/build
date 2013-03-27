@@ -4,8 +4,7 @@ set -e
 
 # replace symlinks with copies of files.  As long as there are no chains
 # this should work
-git="/c/Program Files (x86)/Git/bin/git"
-for f in $("$git" ls-files -s | awk '$1==120000 {print $4}'); do
+for f in $(git ls-files -s | awk '$1==120000 {print $4}'); do
   t="$(cat "$f")"
   dir="$(dirname "$f")"
   rm -fv "$f"
@@ -13,9 +12,11 @@ for f in $("$git" ls-files -s | awk '$1==120000 {print $4}'); do
 done
 
 set -x
-./Configure no-idea no-rc5 no-mdc2 mingw
+tar xavf RESULT.zlib.tar.gz --transform 's#^RESULT/#UPSTREAM/#'
+USD="`pwd`/UPSTREAM"
+./Configure no-idea no-rc5 no-mdc2 shared zlib mingw --prefix=/usr --openssldir=/usr -L"${USD}"/usr/lib -I"${USD}"/usr/include -Wl,--nxcompat -Wl,--dynamicbase
 make depend # if you get weird build errors, make sure git's core.autocrlf is not set to true
 make
 make test
-make INSTALL_PREFIX="`pwd`"/RESULT-openssl install
-tar czf RESULT-openssl.tar.gz RESULT-openssl
+make INSTALL_PREFIX="`pwd`"/RESULT install
+tar czf RESULT.openssl.tar.gz RESULT

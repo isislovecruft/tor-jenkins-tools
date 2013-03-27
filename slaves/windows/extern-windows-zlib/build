@@ -3,6 +3,7 @@
 set -e
 set -x
 
-make -f win32/makefile.gcc
-make -f win32/makefile.gcc DESTDIR="`pwd`/RESULT-zlib" install
-tar czf RESULT-zlib.tar.gz RESULT-zlib
+OPTS="BINARY_PATH=/usr/bin INCLUDE_PATH=/usr/include LIBRARY_PATH=/usr/lib"
+make -f win32/Makefile.gcc ${OPTS} LDFLAGS="-Wl,--nxcompat -Wl,--dynamicbase"
+make -f win32/Makefile.gcc ${OPTS} DESTDIR="`pwd`/RESULT" ${OPTS} install
+tar czf RESULT.zlib.tar.gz RESULT

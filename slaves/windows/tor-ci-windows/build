@@ -3,18 +3,23 @@
 set -e
 set -x
 
-for i in libevent openssl zlib; do tar xavf "RESULT-$i.tar.gz"; done
+for i in libevent openssl zlib; do
+	tar xavf "RESULT.$i.tar.gz" --transform 's#^RESULT/#UPSTREAM/#'
+done
 
 ./autogen.sh
-./configure \
-	--with-libevent-dir=./RESULT-libevent/usr/local \
-	--with-openssl-dir=./RESULT-openssl/usr/local/ssl \
-	--with-zlib-dir=./RESULT-zlib \
+# XXX # for dynamic openssl, add RESULT-openssl/usr/local/ssl/bin to PATH
+PATH="`pwd`/UPSTREAM/usr/bin:$PATH" \
+  ./configure \
+	--with-libevent-dir=./UPSTREAM/usr \
+	--with-openssl-dir=./UPSTREAM/usr \
+	--with-zlib-dir=./UPSTREAM/usr \
 	--enable-gcc-warnings \
 	--disable-silent-rules \
 	--disable-asciidoc \
+	--prefix=/usr \
 	CFLAGS='-g -O2 -Wno-error=redundant-decls'
 make
-make check
-make DESTDIR="`pwd`/RESULT-tor" install
-tar caf RESULT-tor.tar.gz RESULT-tor
+PATH="`pwd`/UPSTREAM/usr/bin:$PATH" make check
+make DESTDIR="`pwd`/RESULTr" install
+tar caf RESULT.tor.tar.gz RESULT
