@@ -2,6 +2,11 @@
 
 set -e
 
+if ! command -v git > /dev/null; then
+  echo "Meh, git not in Path.  Trying aliasing to a place where it might be."
+  alias git='/c/Program Files (x86)/Git/cmd/git'
+fi
+
 # replace symlinks with copies of files.  As long as there are no chains
 # this should work
 for f in $(git ls-files -s | awk '$1==120000 {print $4}'); do
