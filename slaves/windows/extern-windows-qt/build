@@ -3,6 +3,10 @@
 set -e
 set -x
 
+if ! [ -e configure.exe ]; then
+    tar xaf ~/qt-everywhere-opensource-src-4.8.4.tar.gz --transform 's#^[^/]*#.#'
+fi
+
 for i in openssl zlib; do
     tar xavf "RESULT.$i.tar.gz" --transform 's#^RESULT/#UPSTREAM/#'
 done
