@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+set -x
+
+for i in openssl zlib; do
+    tar xavf "RESULT.$i.tar.gz" --transform 's#^RESULT/#UPSTREAM/#'
+done
+
+#-openssl-linked \
+# need two slashes at the start of prefix
+./configure.exe \
+    -prefix "//usr" \
+    -system-zlib \
+    -confirm-license \
+    -opensource \
+    -no-qt3support \
+    -release \
+    -nomake demos \
+    -nomake examples \
+    -I "`pwd`/UPSTREAM/usr/include/" \
+    -L "`pwd`/UPSTREAM/usr/lib" \
+    -L "`pwd`/UPSTREAM/usr/bin" \
+    -L "`pwd`/bin"
+
+mingw32-make -j4
+
+mingw32-make install INSTALL_ROOT="$(pwd)/RESULT"
+tar caf RESULT.qt.tar.gz RESULT
