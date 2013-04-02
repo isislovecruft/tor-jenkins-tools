@@ -34,7 +34,8 @@ PATH="$PATH:$base/UPSTREAM/usr/bin" \
     -DMINGW_BINARY_DIR=/c/mingw/bin \
     -DCMAKE_INSTALL_PREFIX="//usr" \
     ..
-mingw32-make -j 4
+PATH="$PATH:$base/UPSTREAM/usr/bin" \
+  mingw32-make -j 2 VERBOSE=1
 make install DESTDIR="$base/RESULT"
 
 cd ..
