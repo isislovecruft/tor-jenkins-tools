@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -e
+set -x
+
+if command -v cmake > /dev/null; then
+  cmake=cmake
+else
+  echo >&2 "Meh, cmake not in Path.  Trying aliasing to a place where it might be..."
+  if [ -e '/c/Program Files (x86)/CMake 2.8/bin/cmake' ]; then
+    cmake='/c/Program Files (x86)/CMake 2.8/bin/cmake'
+  else
+    echo >&2 "Cannot find cmake."
+  fi
+fi
+
+tar xavf ~/workspace/extern-windows-qt/RESULT.qt.tar.gz --transform 's#^RESULT/#UPSTREAM/#'
+
+base="$(pwd)"
+mkdir build
+cd build
+#   -DCMAKE_EXE_LINKER_FLAGS="-static-libgcc -static-libstdc++"
+PATH="$PATH:$base/UPSTREAM/usr/bin" \
+  "$cmake" -G "MSYS Makefiles" \
+    -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -Wl,--nxcompat -Wl,--dynamicbase" \
+    -DWIN2K=1 \
+    -DQT_BINARY_DIR="$base/UPSTREAM/usr/bin" \
+    -DQT_INCLUDE_DIR="$base/UPSTREAM/usr/include" \
+    -DQT_QTCORE_INCLUDE_DIR="$base/UPSTREAM/usr/include/QtCore" \
+    -DQT_QTGUI_INCLUDE_DIR="$base/UPSTREAM/usr/include/QtGui" \
+    -DQT_QTNETWORK_INCLUDE_DIR="$base/UPSTREAM/usr/include/QtNetwork" \
+    -DQT_QTXML_INCLUDE_DIR="$base/UPSTREAM/usr/include/QtXml" \
+    -DCMAKE_BUILD_TYPE=minsizerel \
+    -DMINGW_BINARY_DIR=/c/mingw/bin \
+    -DCMAKE_INSTALL_PREFIX="//usr" \
+    ..
+mingw32-make -j 4
+make install DESTDIR="$base/RESULT"
+
+cd ..
+cp -v /mingw/bin/libgcc_s_dw2-1.dll RESULT/usr/bin
+cp -v /mingw/bin/libstdc++-6.dll RESULT/usr/bin
+
+cp -v UPSTREAM/usr/bin/QtCore4.dll RESULT/usr/bin
+cp -v UPSTREAM/usr/bin/QtGui4.dll RESULT/usr/bin
+cp -v UPSTREAM/usr/bin/QtNetwork4.dll RESULT/usr/bin
+cp -v UPSTREAM/usr/bin/QtXml4.dll RESULT/usr/bin
+
+tar caf RESULT.vidalia.tar.gz RESULT
