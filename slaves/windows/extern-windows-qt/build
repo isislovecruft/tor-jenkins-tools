@@ -27,7 +27,7 @@ done
     -L "`pwd`/UPSTREAM/usr/bin" \
     -L "`pwd`/bin"
 
-mingw32-make -j4
+mingw32-make -j 2
 
 mingw32-make install INSTALL_ROOT="$(pwd)/RESULT"
 
