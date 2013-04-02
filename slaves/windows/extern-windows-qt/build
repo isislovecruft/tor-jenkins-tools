@@ -30,4 +30,6 @@ done
 mingw32-make -j4
 
 mingw32-make install INSTALL_ROOT="$(pwd)/RESULT"
-tar caf RESULT.qt.tar.gz --ignore-failed-read RESULT
+
+# We get weird "File changed as we read it for directories..."
+tar caf RESULT.qt.tar.gz RESULT || true
