@@ -2,14 +2,20 @@
 
 set -e
 
-if ! command -v git > /dev/null; then
-  echo "Meh, git not in Path.  Trying aliasing to a place where it might be."
-  alias git='/c/Program Files (x86)/Git/cmd/git'
+if command -v git > /dev/null; then
+  git=git
+else
+  echo >&2 "Meh, git not in Path.  Trying aliasing to a place where it might be..."
+  if [ -e '/c/Program Files (x86)/Git/cmd/git' ]; then
+    git='/c/Program Files (x86)/Git/cmd/git'
+  else
+    echo >&2 "Cannot find git."
+  fi
 fi
 
 # replace symlinks with copies of files.  As long as there are no chains
 # this should work
-for f in $(git ls-files -s | awk '$1==120000 {print $4}'); do
+for f in $("$git" ls-files -s | awk '$1==120000 {print $4}'); do
   t="$(cat "$f")"
   dir="$(dirname "$f")"
   rm -fv "$f"
