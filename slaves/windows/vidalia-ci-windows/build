@@ -14,7 +14,7 @@ else
   fi
 fi
 
-tar xavf ~/workspace/extern-windows-qt/RESULT.qt.tar.gz --transform 's#^RESULT/#UPSTREAM/#'
+tar xavf RESULT.qt.tar.gz --transform 's#^RESULT/#UPSTREAM/#'
 
 base="$(pwd)"
 mkdir build
