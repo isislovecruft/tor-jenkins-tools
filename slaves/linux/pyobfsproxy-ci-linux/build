@@ -6,6 +6,6 @@ tar xavf "RESULT.pyptlib.tar.gz" --transform 's#^RESULT/#UPSTREAM/#'
 
 python setup.py build
 PYTHONPATH=UPSTREAM/usr/lib/python2.7/site-packages trial obfsproxy
-python setup.py install --root="`pwd`/RESULT" --prefix=/usr
+python setup.py install --root="`pwd`/RESULT" --prefix=/usr --no-compile
 
 tar caf RESULT.pyobfsproxy.tar.gz RESULT

@@ -9,6 +9,6 @@ for i in pyptlib/test/* ; do
 	PYTHONPATH=. python $i
 done
 
-python setup.py install --root="`pwd`/RESULT" --prefix=/usr
+python setup.py install --root="`pwd`/RESULT" --prefix=/usr --no-compile
 
 tar caf RESULT.pyptlib.tar.gz RESULT
