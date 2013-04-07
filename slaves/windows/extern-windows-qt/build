@@ -3,13 +3,15 @@
 set -e
 set -x
 
-if ! [ -e configure.exe ]; then
-    tar xaf ~/qt-everywhere-opensource-src-4.8.4.tar.gz --transform 's#^[^/]*#.#'
-fi
+./fetch
 
 for i in openssl zlib; do
     tar xavf "RESULT.$i.tar.gz" --transform 's#^RESULT/#UPSTREAM/#'
 done
+
+mkdir build
+cd build
+tar xaf ../qt-everywhere-opensource-src-4.8.4.tar.gz --transform 's#^[^/]*#.#'
 
 #-openssl-linked \
 # need two slashes at the start of prefix
@@ -22,9 +24,9 @@ done
     -release \
     -nomake demos \
     -nomake examples \
-    -I "`pwd`/UPSTREAM/usr/include/" \
-    -L "`pwd`/UPSTREAM/usr/lib" \
-    -L "`pwd`/UPSTREAM/usr/bin" \
+    -I "`pwd`/../UPSTREAM/usr/include/" \
+    -L "`pwd`/../UPSTREAM/usr/lib" \
+    -L "`pwd`/../UPSTREAM/usr/bin" \
     -L "`pwd`/bin"
 
 mingw32-make -j 2
@@ -32,4 +34,4 @@ mingw32-make -j 2
 mingw32-make install INSTALL_ROOT="$(pwd)/RESULT"
 
 # We get weird "File changed as we read it for directories..."
-tar caf RESULT.qt.tar.gz RESULT || true
+tar caf ../RESULT.qt.tar.gz RESULT || true
