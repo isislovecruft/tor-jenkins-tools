@@ -30,12 +30,10 @@ set -u
 
 info() {
     logger -p daemon.info -t "$MYLOGNAME" "$1"
-    echo "$1"
 }
 
 croak() {
     logger -s -p daemon.warn -t "$MYLOGNAME" "$1"
-    echo >&2 "$1"
     exit 1
 }
 
