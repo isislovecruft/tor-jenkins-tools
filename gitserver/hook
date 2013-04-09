@@ -58,6 +58,6 @@ GIT_DIR="$JOBGIT" git show master:jobs.yaml |
         json='{"parameter": [
                   { "name": "commit", "value": "'"$digest"'"},
                             { "name": "branch", "value": "'"$branch"'"} ]}'
-        curl -X POST "$JENKINS_URL/job/$job/build" -d delay=30 --data-urlencode json="$json"
+        curl --silent --show-error -X POST "$JENKINS_URL/job/$job/build" -d delay=30 --data-urlencode json="$json"
         info "Triggering jenkins build for ($job, $branch, $digest)."
     done
