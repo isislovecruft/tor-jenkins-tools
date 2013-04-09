@@ -34,6 +34,7 @@ if len(sys.argv) != 3:
 
 gitreffn = sys.argv[1]
 url = sys.argv[2]
+if not url.endswith('.git'): url += ".git"
 
 # learn which branches have been changed
 changed = {}
@@ -57,7 +58,11 @@ for entry in f:
         if not 'git' in scm: continue
         git = scm['git']
         if not 'url' in git: continue
-        if git['url'] != url: continue
+
+        joburl = git['url']
+        if not joburl.endswith('.git'): joburl += ".git"
+
+        if joburl != url: continue
         if not 'branches' in git: continue
         for b in git['branches']:
             if b in changed:
