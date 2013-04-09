@@ -1,0 +1,281 @@
+#!/bin/bash
+
+# helper script to build tor debian releases
+
+# Copyright 2007,2008,2009,2010,2011,2012,2013 Peter Palfrader
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+assert_files_dont_exist () {
+	local pkg="$1"; shift
+	local debian_version="$1";
+	if [ -z "$debian_version" ]; then
+		echo "assert_files_dont_exist called without debian_version" >&2
+		exit 1;
+	fi
+
+	if [ -e "${PKG}_$debian_version.diff.gz" ] ; then
+		echo "${PKG}_$debian_version.diff.gz already exists" >&2
+		exit 1;
+	fi
+	if [ -e "${PKG}_$debian_version.dsc" ] ; then
+		echo "${PKG}_$debian_version.dsc already exists" >&2
+		exit 1;
+	fi
+	if [ -e "${PKG}_$debian_version""_amd64.deb" ] ; then
+		echo "${PKG}_$debian_version""_amd64.deb already exists" >&2
+		exit 1;
+	fi
+	if [ -e "${PKG}_$debian_version""_amd64.changes" ] ; then
+		echo "${PKG}_$debian_version""_amd64.changes already exists" >&2
+		exit 1;
+	fi
+}
+
+get_debian_version() {
+	local dir="$1"; shift
+	local which="${1:-}"; shift
+
+	if [ -z "$which" ]; then
+		( cd $dir && dpkg-parsechangelog | grep-dctrl -n -s Version '' )
+	else
+		local v=$(get_debian_version $dir)
+		case "$which" in
+			upstream) echo "${v%-*}" ;;
+			debrev) echo "${v##*-}" ;;
+			*)
+				echo >&2 "Unknown key '$which' in get_debian_version"
+				exit 1
+		esac
+	fi
+}
+
+# remove_completely ... 0 replace hardening-includes with hardening-wrapper
+#                       1 get rid entirely
+hardening_backport() {
+	local remove_completely="$1"
+
+	sed -i -e '/^Build-Depends/ s/, *hardening-includes//' debian/control
+	if [ "$remove_completely" = 0 ]; then
+		sed -i -e '/^Build-Depends/ s/$/, hardening-wrapper/' debian/control
+	fi
+
+	if [ "$remove_completely" = 0 ]; then
+		sed -i -e 's#include /usr/share/hardening-includes/hardening.make#export DEB_BUILD_HARDENING=1#' debian/rules
+		sed -i -e '/export DEB_BUILD_HARDENING=1/ a export DEB_BUILD_HARDENING_DEBUG=1' debian/rules
+	else
+		sed -i -e 's#include /usr/share/hardening-includes/hardening.make##' debian/rules
+	fi
+
+	if [ "$remove_completely" = 0 ]; then
+		dch --append "Replace hardening-includes use with hardening-wrapper."
+	else
+		dch --append "Completely remove hardening-includes use."
+	fi
+}
+
+remove_apparmor() {
+	local builddep_only="${1:-}"
+
+	if grep -q dh-apparmor debian/control; then
+		sed -i -e '/^Build-Depends/ s/, *dh-apparmor//' debian/control
+		if [ "$builddep_only" = 1 ]; then
+			dch --append "Remove dh-apparmor build dependency for backport."
+		else
+			sed -i -e 's/dh_apparmor/# &/' debian/rules
+			sed -i -e 's;install.*etc/apparmor.d;# &;' debian/rules
+			dch --append "Remove apparmor support for backport."
+		fi
+	fi
+}
+
+bp1() {
+	local pkg="$1"; shift
+	local dir="$1"; shift
+	local sid_debian_version="$1"; shift
+	local dist="$1"; shift
+
+	dpkg-source -x ${pkg}_$sid_debian_version.dsc
+	(cd $dir; backport $dist)
+}
+bp2() {
+	local pkg="$1"; shift
+	local dir="$1"; shift
+	local origtar="$1"; shift
+
+	local debian_version=$(get_debian_version $dir)
+	assert_files_dont_exist $pkg $debian_version
+	dpkg-source -b $dir $origtar
+	rm -r $dir
+}
+
+backport_all() {
+	local pkg="$1"; shift
+	local dir="$1"; shift
+	local origtar="$1"; shift
+	local sid_debian_version="$1"; shift
+
+	# SID
+	#################################################
+	# null
+
+	# SQUEEZE
+	#################################################
+	bp1 $pkg $dir $sid_debian_version squeeze
+	(cd $dir; remove_apparmor)
+	bp2 $pkg $dir $origtar
+
+	# WHEEZY
+	#################################################
+	bp1 $pkg $dir $sid_debian_version wheezy
+	bp2 $pkg $dir $origtar
+
+	# NATTY  (EOL: October 2012)
+	#################################################
+	bp1 $pkg $dir $sid_debian_version natty
+	(cd $dir; remove_apparmor)
+	bp2 $pkg $dir $origtar
+
+	# ONEIRIC  (EOL: April 2013)
+	#################################################
+	bp1 $pkg $dir $sid_debian_version oneiric
+	(cd $dir; remove_apparmor 1) # dh_apparmor is in their patched debhelper
+	bp2 $pkg $dir $origtar
+
+	# PRECISE  (EOL: April 2017)
+	#################################################
+	bp1 $pkg $dir $sid_debian_version precise
+	bp2 $pkg $dir $origtar
+
+	# QUANTAL  (EOL: April 2014)
+	#################################################
+	bp1 $pkg $dir $sid_debian_version quantal
+	bp2 $pkg $dir $origtar
+
+
+	#################################################
+	## BPO
+	#################################################
+
+	if [ "${DO_BPO:-}" = 1 ]; then
+		# SQUEEZE-BPO
+		#################################################
+		bp1 $pkg $dir $sid_debian_version squeeze-bpo
+		bp2 $pkg $dir $origtar
+
+		mkdir bpo
+		mv *'~bpo'* bpo/
+	fi
+}
+
+main() {
+	local origtar="$1"; shift
+	local deb_revision="$1"; shift
+	local gitdir="$1"; shift
+	local pkg="$1"; shift
+
+	[ -d local-build ] || mkdir local-build
+
+	if [ -z "$origtar" ] ; then
+		echo "Usage: $0 <orig.tar.gz> [version]" >&2
+		exit 1;
+	fi
+
+
+	if [ ! -e "$origtar" ] ; then
+		echo "$origtar does not exist." >&2
+		exit 1;
+	fi
+
+	if [ "${origtar#${pkg}-}" != $origtar ]; then
+		ver="$origtar"
+		ver=${ver#${pkg}-}
+		ver=${ver%.tar.gz}
+		neworig="${pkg}_$ver.orig.tar.gz"
+		if ! [ -e "$neworig" ]; then
+			ln -v "$origtar" "$neworig"
+		fi
+		echo "Using $neworig instead of $origtar"
+		origtar="$neworig"
+	fi
+
+	local dir
+	local dir_version
+	dir=`tar tzf $origtar 2>/dev/null | head -n1`
+	dir="${dir%%/}"
+	dir_version="${dir##${pkg}-}"
+	if [ -e "$dir" ] ; then
+		echo "$dir already exists." >&2
+		exit 1;
+	fi
+	tar xzf $origtar
+	git clone -n -s "$gitdir" git-"$dir"
+	local tag="debian-${pkg}-$dir_version-$deb_revision"
+	(cd "git-$dir" && git checkout $tag)
+	if diff -qr "git-$dir" "$dir" --exclude .git  | grep -v '^Only in ' | grep --color .; then
+		echo "Differenced detected."
+		exit 1
+	fi
+	(cd "git-$dir" && echo "\"`git rev-parse --short=16 "$tag"`\"" > "debian/micro-revision.i")
+	cp -av "git-$dir/debian" "$dir"
+	rm -rf "git-$dir"
+
+
+	debian_upstream_version=$(get_debian_version $dir upstream)
+	if [ "$origtar" != "${pkg}_$debian_upstream_version.orig.tar.gz" ] ; then
+		echo "possible mismatch: $origtar but $debian_upstream_version in debian/changelog" >&2
+		exit 1;
+	fi
+
+	debian_version=$(get_debian_version $dir)
+	sid_debian_version="$debian_version"
+	assert_files_dont_exist $pkg $debian_version
+	dpkg-source -b $dir $origtar
+	rm -r $dir
+
+
+
+	# local
+	#################################################
+	cd local-build
+	dpkg-source -x ../${pkg}_$debian_version.dsc
+	cd ${pkg}-$debian_upstream_version
+	remove_apparmor
+	debuild -j8 -rfakeroot -uc -us
+	cd ../..
+
+
+	backport_all "$pkg" "$dir" "$origtar" "$sid_debian_version"
+
+	echo
+	echo "All done"
+}
+
+# this is hardcoded to weasel's directory layout. sorry.
+case "$(basename $0)" in
+	build-tor-sources)
+		set -e
+		set -x
+		GITDIR="$HOME/projects/tor/tor"
+		PKG="tor"
+		DO_BPO=1
+		main "${1:-}" ${2:-1} $GITDIR $PKG
+		;;
+esac

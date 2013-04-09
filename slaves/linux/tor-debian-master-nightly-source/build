@@ -1,0 +1,80 @@
+#!/bin/bash
+
+set -e
+
+thisdir=$(dirname "$0")
+thisdir=$(readlink -f "$thisdir")
+PATH="$PATH:$thisdir/misc"
+
+pkg=tor
+pkggitdir="${pkg}"
+debgitdir="debian-${pkg}"
+
+pkgrev=$(cd "$pkggitdir" && git rev-parse --short HEAD)
+debianrev=$(cd "$debgitdir" && git rev-parse --short HEAD)
+ts="$(TZ=UTC date +%Y%m%dT%H%M%SZ)"
+
+# build release tarball
+#######################
+cd "$pkggitdir"
+./autogen.sh
+mkdir build-tree
+cd build-tree
+../configure --disable-silent-rules --enable-gcc-warnings
+if [ $(ls -1 *.tar.gz | wc -l) != 0 ] ; then
+    echo >&2 "We already have one .tar.gz file before make dist. Confused."
+    exit 1
+fi
+make dist
+if [ $(ls -1 *.tar.gz | wc -l) != 1 ] ; then
+    echo >&2 "Do not have exactly one .tar.gz file after make dist. Confused."
+    exit 1
+fi
+
+tgz="$(echo -n *.tar.gz)"
+mv -v "$tgz" ../..
+cd ../..
+
+
+# prepare debian source package
+###############################
+tar xaf "$tgz"
+
+dir="$(tar taf $tgz 2>/dev/null | head -n1)"
+dir="${dir%%/}"
+dir_version="${dir##${pkg}-}"
+build_version="${dir_version}.nightly-$ts"
+
+origtar="${pkg}_${build_version}.orig.tar.gz"
+ln -v "$tgz" "$origtar"
+
+cp -ra "$debgitdir"/debian "$dir"
+
+( cd "$dir" &&
+  dch --force-distribution \
+    --distribution tor-nightly \
+    --force-bad-version \
+    --newversion "$build_version-1" \
+    "Automated build of tor-nightly at $ts, git revision $pkgrev with debiantree $debianrev."
+)
+
+echo "\"nightly-$pkgrev+$debianrev\"" > "$dir/debian/micro-revision.i"
+
+dpkg-source -b $dir $origtar
+
+# build them ALL
+################
+. "$(which build-tor-sources)"
+set -x
+set +e
+ddir="$pkg-$build_version"
+backport_all "$pkg" "$ddir" "$origtar" "$build_version-1"
+for i in *.dsc; do
+    dpkg-source -x "$i"
+    (cd "$ddir" && dpkg-genchanges -S) > ${i%.dsc}_src.changes
+    rm -r "$ddir"
+done
+
+mkdir RESULT
+for i in *changes; do dcmd mv -v $i RESULT; done
+echo "$build_version" > RESULT/version
