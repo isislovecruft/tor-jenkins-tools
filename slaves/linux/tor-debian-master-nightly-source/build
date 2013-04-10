@@ -2,6 +2,7 @@
 
 set -e
 set -x
+set -u
 
 thisdir=$(dirname "$0")
 thisdir=$(readlink -f "$thisdir")
@@ -12,7 +13,7 @@ pkggitdir="${pkg}"
 debgitdir="debian-${pkg}"
 
 (cd "$pkggitdir" && git clean -dxf)
-(cd "$torgitdir" && git clean -dxf)
+(cd "$debgitdir" && git clean -dxf)
 rm -rf RESULT
 rm -f *.tar.gz || true
 
