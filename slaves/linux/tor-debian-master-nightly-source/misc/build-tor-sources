@@ -31,20 +31,20 @@ assert_files_dont_exist () {
 		exit 1;
 	fi
 
-	if [ -e "${PKG}_$debian_version.diff.gz" ] ; then
-		echo "${PKG}_$debian_version.diff.gz already exists" >&2
+	if [ -e "${pkg}_$debian_version.diff.gz" ] ; then
+		echo "${pkg}_$debian_version.diff.gz already exists" >&2
 		exit 1;
 	fi
-	if [ -e "${PKG}_$debian_version.dsc" ] ; then
-		echo "${PKG}_$debian_version.dsc already exists" >&2
+	if [ -e "${pkg}_$debian_version.dsc" ] ; then
+		echo "${pkg}_$debian_version.dsc already exists" >&2
 		exit 1;
 	fi
-	if [ -e "${PKG}_$debian_version""_amd64.deb" ] ; then
-		echo "${PKG}_$debian_version""_amd64.deb already exists" >&2
+	if [ -e "${pkg}_$debian_version""_amd64.deb" ] ; then
+		echo "${pkg}_$debian_version""_amd64.deb already exists" >&2
 		exit 1;
 	fi
-	if [ -e "${PKG}_$debian_version""_amd64.changes" ] ; then
-		echo "${PKG}_$debian_version""_amd64.changes already exists" >&2
+	if [ -e "${pkg}_$debian_version""_amd64.changes" ] ; then
+		echo "${pkg}_$debian_version""_amd64.changes already exists" >&2
 		exit 1;
 	fi
 }
