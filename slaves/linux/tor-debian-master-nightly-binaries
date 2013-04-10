@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -e
+set -x
+set -u
+
+rm -rf build
+rm -rf RESULT
+
+case "$SUITE" in
+  sid)
+    dsc=$(ls -1 incoming/*.dsc | grep -v '~')
+    ;;
+  *)
+    dsc=$(ls -1 incoming/*"$SUITE"+*.dsc)
+    ;;
+esac
+
+if [ "$(echo "$dsc" | wc -l)" != 1 ] || [ -z "$dsc" ] ; then
+  echo >&2 "Weird number of dsc files found."
+  exit 1
+fi
+
+case "$ARCHITECTURE" in
+  amd64)
+    extra="--arch-all"
+    ;;
+  *)
+    extra=""
+    ;;
+esac
+
+mkdir build
+dcmd ln -v "$dsc" build
+cd build
+sbuild --arch="$ARCHITECTURE" --dist="$SUITE" --nolog --apt-update $extra "$(basename "$dsc")"
+
+changes=$(ls -1 *.changes)
+if [ "$(echo "$changes" | wc -l)" != 1 ] || [ -z "$changes" ] ; then
+  echo >&2 "Weird number of changes files found."
+  exit 1
+fi
+cd ..
+
+mkdir RESULT
+dcmd ln -v "build/$changes" RESULT
