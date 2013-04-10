@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 thisdir=$(dirname "$0")
 thisdir=$(readlink -f "$thisdir")
@@ -52,22 +53,22 @@ cp -ra "$debgitdir"/debian "$dir"
 
 ( cd "$dir" &&
   dch --force-distribution \
-    --distribution tor-nightly \
+    --distribution "$pkg"-nightly \
     --force-bad-version \
     --newversion "$build_version-1" \
-    "Automated build of tor-nightly at $ts, git revision $pkgrev with debiantree $debianrev."
+    "Automated build of "$pkg"-nightly at $ts, git revision $pkgrev with debiantree $debianrev."
 )
+ddir="$pkg-$build_version"
 
-echo "\"nightly-$pkgrev+$debianrev\"" > "$dir/debian/micro-revision.i"
+echo "\"nightly-$pkgrev+$debianrev\"" > "$ddir/debian/micro-revision.i"
 
-dpkg-source -b $dir $origtar
+dpkg-source -b $ddir $origtar
 
 # build them ALL
 ################
 . "$(which build-tor-sources)"
 set -x
 set +e
-ddir="$pkg-$build_version"
 backport_all "$pkg" "$ddir" "$origtar" "$build_version-1"
 for i in *.dsc; do
     dpkg-source -x "$i"
