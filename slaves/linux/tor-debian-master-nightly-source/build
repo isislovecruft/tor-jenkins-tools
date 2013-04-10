@@ -11,6 +11,11 @@ pkg=tor
 pkggitdir="${pkg}"
 debgitdir="debian-${pkg}"
 
+(cd "$pkggitdir" && git clean -dxf)
+(cd "$torgitdir" && git clean -dxf)
+rm -rf RESULT
+rm -f *.tar.gz || true
+
 pkgrev=$(cd "$pkggitdir" && git rev-parse --short HEAD)
 debianrev=$(cd "$debgitdir" && git rev-parse --short HEAD)
 ts="$(TZ=UTC date +%Y%m%dT%H%M%SZ)"
