@@ -3,4 +3,4 @@ set -x
 set -e
 
 rm -rf build
-timeout -k 5m 60m python ./run_tests.py --all --tor src/or/tor --target RUN_ALL --log TRACE
+timeout -k 5m 60m python ./run_tests.py --all --tor src/or/tor --target RUN_ALL
