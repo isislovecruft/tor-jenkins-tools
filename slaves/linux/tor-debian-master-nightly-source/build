@@ -14,7 +14,7 @@ merge_release_maint() {
 
   local relrev=$(git rev-parse --short "$relbranch")
   local mntrev=$(git rev-parse --short "$mntbranch")
-  git co "$relbranch"
+  git checkout "$relbranch"
   git merge --no-commit "$mntbranch"
 
   pkgrev="$relrev+$mntrev"
@@ -61,7 +61,7 @@ rm -f *.tar.gz || true
 branch="${branch:-master}"
 case "$branch" in
   "master")
-    pkgrev=$(cd "$pkggitdir" && git co "$branch" && git rev-parse --short HEAD)
+    pkgrev=$(cd "$pkggitdir" && git checkout "$branch" && git rev-parse --short HEAD)
     ;;
   "0.2.4")
     merge_release_maint "$pkggitdir" release-0.2.4 maint-0.2.4
