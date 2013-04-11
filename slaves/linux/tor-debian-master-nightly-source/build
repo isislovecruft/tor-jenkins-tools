@@ -13,7 +13,9 @@ merge_release_maint() {
   cd "$pkggitdir"
 
   local relrev=$(git rev-parse --short "$relbranch")
+  if [ -z "$relrev" ]; then echo >&2 "Could not get revision of release branch $relbranch."; exit 1; fi
   local mntrev=$(git rev-parse --short "$mntbranch")
+  if [ -z "$mntrev" ]; then echo >&2 "Could not get revision of maintenance branch $mntbranch."; exit 1; fi
   git checkout "$relbranch"
   git merge --no-commit "$mntbranch"
 
@@ -61,7 +63,7 @@ rm -f *.tar.gz || true
 branch="${branch:-master}"
 case "$branch" in
   "master")
-    pkgrev=$(cd "$pkggitdir" && git checkout "$branch" && git rev-parse --short HEAD)
+    pkgrev=$(cd "$pkggitdir" && git checkout "$branch" && git rev-parse --short=16 HEAD)
     ;;
   "0.2.4")
     merge_release_maint "$pkggitdir" release-0.2.4 maint-0.2.4
@@ -88,7 +90,7 @@ if [ $(ls -1 *.tar.gz | wc -l) != 0 ] ; then
     echo >&2 "We already have one .tar.gz file before make dist. Confused."
     exit 1
 fi
-make dist -j6
+make dist
 if [ $(ls -1 *.tar.gz | wc -l) != 1 ] ; then
     echo >&2 "Do not have exactly one .tar.gz file after make dist. Confused."
     exit 1
@@ -101,36 +103,31 @@ cd ../..
 
 # prepare debian source package
 ###############################
-tar xaf "$tgz"
-
-dir="$(tar taf $tgz 2>/dev/null | head -n1)"
-dir="${dir%%/}"
-dir_version="${dir##${pkg}-}"
+tardir="$(tar taf $tgz 2>/dev/null | head -n1)"
+tardir="${tardir%%/}"
+dir_version="${tardir##${pkg}-}"
 build_version="${dir_version}-$ts"
+ddir="$pkg-$build_version"
+
+tar xaf "$tgz"
+rm -f "$tgz"
+
+[ "$tardir" = "$ddir" ] || mv "$tardir" "$ddir"
+echo "\"$pkgrev\"" > "$ddir/micro-revision.i"
 
 origtar="${pkg}_${build_version}.orig.tar.gz"
-ln -v "$tgz" "$origtar"
+tar caf "$origtar" "$ddir"
 
-cp -ra "$debgitdir"/debian "$dir"
+cp -ra "$debgitdir"/debian "$ddir"
+echo "\"$pkgrev+$debianrev\"" > "$ddir/debian/micro-revision.i"
 
-( cd "$dir" &&
+( cd "$ddir" &&
   dch --force-distribution \
     --distribution "$pkg"-nightly \
     --force-bad-version \
     --newversion "$build_version-1" \
     "Automated build of "$pkg"-nightly at $ts, git revision $pkgrev with debiantree $debianrev."
 )
-# different chroots behave differently.  yay.
-ddir="$pkg-$build_version"
-if [ -e "$dir" ]; then
-  if [ -e "$ddir" ]; then
-    echo >&2 "Confused."
-    exit 1
-  fi
-  mv "$dir" "$ddir"
-fi
-
-echo "\"nightly-$pkgrev+$debianrev\"" > "$ddir/debian/micro-revision.i"
 
 dpkg-source -b $ddir $origtar
 
