@@ -4,20 +4,76 @@ set -e
 set -x
 set -u
 
+merge_release_maint() {
+  local pkggitdir="$1"; shift
+  local relbranch="$1"; shift
+  local mntbranch="$1"; shift
+
+  pushd .
+  cd "$pkggitdir"
+
+  local relrev=$(git rev-parse --short "$relbranch")
+  local mntrev=$(git rev-parse --short "$mntbranch")
+  git co "$relbranch"
+  git merge --no-commit "$mntbranch"
+
+  pkgrev="$relrev+$mntrev"
+  popd
+}
+
+fudge_upstream_version() {
+  local pkggitdir="$1"; shift
+
+  pushd .
+  cd "$pkggitdir"
+
+  if [ "$(grep -c AC_INIT configure.ac)" != 1 ]; then
+    echo >&2 "Did not find exactly one AC_INIT"
+    exit 1
+  fi
+
+  sed -i -e '/^AC_INIT(/ s/\(-dev\)\?])/-dev])/' configure.ac
+
+  if [ "$(grep -c 'AC_INIT.*-dev' configure.ac)" != 1 ]; then
+    echo >&2 "Unexpect version in configure.ac"
+    exit 1
+  fi
+
+  popd
+}
+
+
+
 thisdir=$(dirname "$0")
 thisdir=$(readlink -f "$thisdir")
-PATH="$PATH:$thisdir/misc"
+PATH="$thisdir/misc:$PATH"
 
 pkg=tor
 pkggitdir="${pkg}"
 debgitdir="debian-${pkg}"
 
-(cd "$pkggitdir" && git clean -dxf)
-(cd "$debgitdir" && git clean -dxf)
+(cd "$pkggitdir" && git clean -dxf && git reset --hard HEAD)
+(cd "$debgitdir" && git clean -dxf && git reset --hard HEAD)
 rm -rf RESULT
 rm -f *.tar.gz || true
 
-pkgrev=$(cd "$pkggitdir" && git rev-parse --short HEAD)
+
+branch="${branch:-master}"
+case "$branch" in
+  "master")
+    pkgrev=$(cd "$pkggitdir" && git co "$branch" && git rev-parse --short HEAD)
+    ;;
+  "0.2.4")
+    merge_release_maint "$pkggitdir" release-0.2.4 maint-0.2.4
+    ;;
+  *)
+    echo >&2 "Unknown/unsupported branch: '$branch'"
+    exit 1
+    ;;
+esac
+
+fudge_upstream_version "$pkggitdir"
+
 debianrev=$(cd "$debgitdir" && git rev-parse --short HEAD)
 ts="$(TZ=UTC date +%Y%m%dT%H%M%SZ)"
 
@@ -32,7 +88,7 @@ if [ $(ls -1 *.tar.gz | wc -l) != 0 ] ; then
     echo >&2 "We already have one .tar.gz file before make dist. Confused."
     exit 1
 fi
-make dist
+make dist -j6
 if [ $(ls -1 *.tar.gz | wc -l) != 1 ] ; then
     echo >&2 "Do not have exactly one .tar.gz file after make dist. Confused."
     exit 1
@@ -50,7 +106,7 @@ tar xaf "$tgz"
 dir="$(tar taf $tgz 2>/dev/null | head -n1)"
 dir="${dir%%/}"
 dir_version="${dir##${pkg}-}"
-build_version="${dir_version}.nightly-$ts"
+build_version="${dir_version}-$ts"
 
 origtar="${pkg}_${build_version}.orig.tar.gz"
 ln -v "$tgz" "$origtar"
@@ -64,7 +120,15 @@ cp -ra "$debgitdir"/debian "$dir"
     --newversion "$build_version-1" \
     "Automated build of "$pkg"-nightly at $ts, git revision $pkgrev with debiantree $debianrev."
 )
+# different chroots behave differently.  yay.
 ddir="$pkg-$build_version"
+if [ -e "$dir" ]; then
+  if [ -e "$ddir" ]; then
+    echo >&2 "Confused."
+    exit 1
+  fi
+  mv "$dir" "$ddir"
+fi
 
 echo "\"nightly-$pkgrev+$debianrev\"" > "$ddir/debian/micro-revision.i"
 
