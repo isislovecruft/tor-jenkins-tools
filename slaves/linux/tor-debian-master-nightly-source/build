@@ -12,6 +12,9 @@ merge_release_maint() {
   pushd .
   cd "$pkggitdir"
 
+  git branch -t $relbranch origin/$relbranch || true
+  git branch -t $mntbranch origin/$mntbranch || true
+
   local relrev=$(git rev-parse --short "$relbranch")
   if [ -z "$relrev" ]; then echo >&2 "Could not get revision of release branch $relbranch."; exit 1; fi
   local mntrev=$(git rev-parse --short "$mntbranch")
