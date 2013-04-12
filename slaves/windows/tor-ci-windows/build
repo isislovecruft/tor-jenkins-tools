@@ -3,23 +3,35 @@
 set -e
 set -x
 
+BASE="`pwd`"
+trap "rm -rf '$BASE/UPSTREAM' '$BASE/tor' '$BASE/build-tree' '$BASE/RESULT'" EXIT
+
 for i in libevent openssl zlib; do
 	tar xavf "RESULT.$i.tar.gz" --transform 's#^RESULT/#UPSTREAM/#'
+	rm "RESULT.$i.tar.gz"
 done
 
-./autogen.sh
-# XXX # for dynamic openssl, add RESULT-openssl/usr/local/ssl/bin to PATH
-PATH="`pwd`/UPSTREAM/usr/bin:$PATH" \
-  ./configure \
-	--with-libevent-dir=./UPSTREAM/usr \
-	--with-openssl-dir=./UPSTREAM/usr \
-	--with-zlib-dir=./UPSTREAM/usr \
+(cd tor && ./autogen.sh)
+
+# for dynamic openssl, we need to add openssl's bin dir to PATH
+PATH="`pwd`/UPSTREAM/usr/bin:$PATH"
+export PATH
+
+mkdir build-tree
+cd build-tree
+
+../tor/configure \
+	--with-libevent-dir=../UPSTREAM/usr \
+	--with-openssl-dir=../UPSTREAM/usr \
+	--with-zlib-dir=../UPSTREAM/usr \
 	--enable-gcc-warnings \
 	--disable-silent-rules \
 	--disable-asciidoc \
 	--prefix=/usr \
 	CFLAGS='-g -O2 -Wno-error=redundant-decls'
 make
-PATH="`pwd`/UPSTREAM/usr/bin:$PATH" make check
-make DESTDIR="`pwd`/RESULT" install
+make check
+make DESTDIR="`pwd`/../RESULT" install
+cd ..
+
 tar caf RESULT.tor.tar.gz RESULT
