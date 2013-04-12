@@ -67,9 +67,11 @@ branch="${branch:-master}"
 case "$branch" in
   "master")
     pkgrev=$(cd "$pkggitdir" && git checkout "$branch" && git rev-parse --short=16 HEAD)
+    distribution="$pkg-nightly-master"
     ;;
   "0.2.4")
     merge_release_maint "$pkggitdir" release-0.2.4 maint-0.2.4
+    distribution="$pkg-nightly-0.2.4.x"
     ;;
   *)
     echo >&2 "Unknown/unsupported branch: '$branch'"
@@ -126,7 +128,7 @@ echo "\"$pkgrev+$debianrev\"" > "$ddir/debian/micro-revision.i"
 
 ( cd "$ddir" &&
   dch --force-distribution \
-    --distribution "$pkg"-nightly \
+    --distribution "$distribution" \
     --force-bad-version \
     --newversion "$build_version-1" \
     "Automated build of "$pkg"-nightly at $ts, git revision $pkgrev with debiantree $debianrev."
