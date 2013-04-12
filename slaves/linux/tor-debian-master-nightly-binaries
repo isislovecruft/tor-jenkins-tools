@@ -34,15 +34,15 @@ rm -rf RESULT
 
 case "$SUITE" in
   sid)
-    dsc=$(ls -1 incoming/*.dsc | grep -v '~')
+    srcchanges=$(ls -1 incoming/*_src.changes | grep -v '~')
     ;;
   *)
-    dsc=$(ls -1 incoming/*"$SUITE"+*.dsc)
+    srcchanges=$(ls -1 incoming/*"$SUITE"+*_src.changes)
     ;;
 esac
 
-if [ "$(echo "$dsc" | wc -l)" != 1 ] || [ -z "$dsc" ] ; then
-  echo >&2 "Weird number of dsc files found."
+if [ "$(echo "$srcchanges" | wc -l)" != 1 ] || [ -z "$srcchanges" ] ; then
+  echo >&2 "Weird number of changes files found."
   exit 1
 fi
 
@@ -54,6 +54,8 @@ case "$ARCHITECTURE" in
     extra=""
     ;;
 esac
+
+dsc=$(dcmd --dsc "$srcchanges")
 
 mkdir build
 dcmd ln -v "$dsc" build
@@ -74,3 +76,7 @@ cd ..
 
 mkdir RESULT
 dcmd ln -v "build/$changes" RESULT
+# the amd64 job copies the sources to the result
+if [ "$ARCHITECTURE" = "amd64" ]; then
+  dcmd ln -v "$srcchanges" RESULT
+fi
