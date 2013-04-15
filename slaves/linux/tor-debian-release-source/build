@@ -1,0 +1,103 @@
+#!/bin/bash
+
+if [ -z "$DEBIAN_VERSION" ]; then
+    echo >&2 "No DEBIAN_VERSION set."
+    exit 1
+fi
+
+cleanup() {
+    if [ -n "$base" ]; then
+        cd "$base"
+        rm -rf pristine-upstream debian build gpghome
+    fi
+}
+
+trap 'cleanup' EXIT
+
+set -e
+set -u
+set -x
+
+base=$(pwd)
+thisscriptdir=$(dirname "$0")
+thisscriptdir=$(readlink -f "$thisscriptdir")
+
+keyring="$thisscriptdir/keyrings/upstream-keyring.gpg"
+deb_keyring="$thisscriptdir/keyrings/debian-keyring.gpg"
+pkg=tor
+
+debian_version="$DEBIAN_VERSION"
+upstream_version="${debian_version%-*}"
+debian_tag="debian-$pkg-$debian_version"
+
+mkdir build gpghome
+
+cd $base/debian
+if [ -z "$(git tag -l "$debian_tag")" ]; then
+    echo >&2 "Tag $debian_tag does not exist."
+    exit 1
+fi
+
+# get original upstream tarball and verify it.
+##############################################
+cd "$base/pristine-upstream"
+git branch pristine-tar origin/master
+git branch pristine-tar-signatures origin/pristine-tar-signatures
+
+cd "$base/debian"
+git remote add pristine `readlink -f ../pristine-upstream`
+git fetch pristine
+git branch pristine-tar pristine/pristine-tar
+
+tarball="${pkg}-${upstream_version}.tar.gz"
+signature="$tarball.asc"
+pristine-tar checkout "$tarball"
+mv "$tarball" "$base/build"
+
+cd "$base/pristine-upstream"
+git show pristine-tar-signatures:"$signature" > ../build/"$signature"
+
+cd "$base/build"
+gpgv --keyring "$keyring" "$signature" "$tarball"
+origtar="${pkg}_${upstream_version}.orig.tar.gz"
+ln "$tarball" "$origtar"
+tar xaf "$tarball" --transform 's#^[^/]*#upstream#'
+
+# get debian tree
+#################
+cp "$deb_keyring" "$base/gpghome/pubring.gpg"
+
+cd "$base/debian"
+GNUPGHOME="$base/gpghome" git tag -v "$debian_tag"
+
+mkdir "$base/build/deb"
+git archive "$debian_tag" | (cd "$base/build/deb" && tar xf -)
+
+# check and build source
+cd "$base/build"
+if diff -qr deb upstream | grep -v '^Only in ' | grep .; then
+    echo >&2 "Unwanted difference in source trees!"
+    exit 1
+fi
+
+mv deb/debian upstream
+dpkg-source -b upstream $origtar
+
+
+# build them ALL
+################
+ddir="${pkg}-${upstream_version}"
+PATH="$thisscriptdir/../tor-debian-master-nightly-source/misc:$PATH"
+. "$(which build-tor-sources)"
+set -x
+set +e
+backport_all "$pkg" "$ddir" "$origtar" "$debian_version"
+for i in *.dsc; do
+    dpkg-source -x "$i"
+    (cd "$ddir" && dpkg-genchanges -S) > ${i%.dsc}_src.changes
+    rm -r "$ddir"
+done
+
+mkdir "$base/RESULT"
+for i in *changes; do dcmd mv -v "$i" "$base/RESULT"; done
+echo "$debian_version" > "$base/RESULT/version"
