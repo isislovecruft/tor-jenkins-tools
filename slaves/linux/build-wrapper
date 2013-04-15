@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# wrapper to run a jenkins job in a specific chroot.
+#
+# SUITE and ARCHITECTURE are passed in the environment
+#
+#
+# SUITE is passed on to the scripts run in the chroot.
+# Extra environment variables can be passed on by specifying their names on the command line.
+#
+#  - scripts to be run life in directories named after their jobname.
+#  - in those dirs, the setup script or directory will be run as root, build
+#    will be run as an unprivileged user.
+#  - If the item in question is a directory, run-parts will be used on it.
+
 set -u
 set -e
 
@@ -56,11 +69,17 @@ if [ -z "$chroot" ]; then
 	exit 1
 fi
 
+# pass extra environment
+declare -a extra_args
+for i in "$@"; do
+	extra_args+=("$i=${!i}")
+done
+
 echo "Setup:"
 f="$jobdir/setup"
-if [ -d "$f" ]; then schroot --run-session --chroot "$chroot" -u root -- env SUITE="$SUITE" run-parts "$f";
-                else schroot --run-session --chroot "$chroot" -u root -- env SUITE="$SUITE" "$f"; fi
+if [ -d "$f" ]; then schroot --run-session --chroot "$chroot" -u root -- env SUITE="$SUITE" "${extra_args[@]}" run-parts "$f";
+                else schroot --run-session --chroot "$chroot" -u root -- env SUITE="$SUITE" "${extra_args[@]}" "$f"; fi
 echo "Build:"
 f="$jobdir/build"
-if [ -d "$f" ]; then schroot --run-session --chroot "$chroot"         -- env SUITE="$SUITE" run-parts "$f";
-                else schroot --run-session --chroot "$chroot"         -- env SUITE="$SUITE" "$f"; fi
+if [ -d "$f" ]; then schroot --run-session --chroot "$chroot"         -- env SUITE="$SUITE" "${extra_args[@]}" run-parts "$f";
+                else schroot --run-session --chroot "$chroot"         -- env SUITE="$SUITE" "${extra_args[@]}" "$f"; fi
