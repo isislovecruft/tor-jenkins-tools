@@ -71,15 +71,15 @@ fi
 
 # pass extra environment
 declare -a extra_args
-for i in "$@"; do
+for i in "$@" SUITE; do
 	extra_args+=("$i=${!i}")
 done
 
 echo "Setup:"
 f="$jobdir/setup"
-if [ -d "$f" ]; then schroot --run-session --chroot "$chroot" -u root -- env SUITE="$SUITE" "${extra_args[@]}" run-parts "$f";
-                else schroot --run-session --chroot "$chroot" -u root -- env SUITE="$SUITE" "${extra_args[@]}" "$f"; fi
+if [ -d "$f" ]; then schroot --run-session --chroot "$chroot" -u root -- env "${extra_args[@]}" run-parts "$f";
+                else schroot --run-session --chroot "$chroot" -u root -- env "${extra_args[@]}" "$f"; fi
 echo "Build:"
 f="$jobdir/build"
-if [ -d "$f" ]; then schroot --run-session --chroot "$chroot"         -- env SUITE="$SUITE" "${extra_args[@]}" run-parts "$f";
-                else schroot --run-session --chroot "$chroot"         -- env SUITE="$SUITE" "${extra_args[@]}" "$f"; fi
+if [ -d "$f" ]; then schroot --run-session --chroot "$chroot"         -- env "${extra_args[@]}" run-parts "$f";
+                else schroot --run-session --chroot "$chroot"         -- env "${extra_args[@]}" "$f"; fi
