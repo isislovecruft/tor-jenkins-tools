@@ -1,3 +1,5 @@
 autoconf
 automake
+pkg-config
+libtool
 libssl-dev
