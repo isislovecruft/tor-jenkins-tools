@@ -82,7 +82,7 @@ if diff -qr deb upstream | grep -v '^Only in ' | grep .; then
 fi
 
 mv deb/debian upstream
-echo "$micro_revision" > upstream/debian/micro-revision.i
+echo "\"$micro_revision\"" > upstream/debian/micro-revision.i
 dpkg-source -b upstream $origtar
 
 
