@@ -28,19 +28,35 @@ merge_release_maint() {
 
 fudge_upstream_version() {
   local pkggitdir="$1"; shift
+  local configure_source
+  local macroname
+  local sedcmd
 
   pushd .
   cd "$pkggitdir"
 
-  if [ "$(grep -c AC_INIT configure.ac)" != 1 ]; then
-    echo >&2 "Did not find exactly one AC_INIT"
+  if [ -e configure.ac ]; then
+    configure_source=configure.ac
+    macroname=AC_INIT
+    sedcmd='/^AC_INIT(/ s/\(-dev\)\?])/-dev])/'
+  elif [ -e configure.in ]; then
+    configure_source=configure.in
+    macroname=AM_INIT_AUTOMAKE
+    sedcmd='/^AM_INIT_AUTOMAKE(/ s/\(-dev\)\?)/-dev)/'
+  else
+    echo >&2 "Did not find configure.in or configure.ac"
     exit 1
   fi
 
-  sed -i -e '/^AC_INIT(/ s/\(-dev\)\?])/-dev])/' configure.ac
+  if [ "$(grep -c "$macroname" "$configure_source")" != 1 ]; then
+    echo >&2 "Did not find exactly one $macroname"
+    exit 1
+  fi
 
-  if [ "$(grep -c 'AC_INIT.*-dev' configure.ac)" != 1 ]; then
-    echo >&2 "Unexpect version in configure.ac"
+  sed -i -e "$sedcmd" "$configure_source"
+
+  if [ "$(grep -c "$macroname.*-dev" "$configure_source")" != 1 ]; then
+    echo >&2 "Unexpect version in $configure_source."
     exit 1
   fi
 
@@ -72,6 +88,10 @@ case "$branch" in
   "0.2.4")
     merge_release_maint "$pkggitdir" release-0.2.4 maint-0.2.4
     distribution="$pkg-nightly-0.2.4.x"
+    ;;
+  "0.2.3")
+    merge_release_maint "$pkggitdir" release-0.2.3 maint-0.2.3
+    distribution="$pkg-nightly-0.2.3.x"
     ;;
   *)
     echo >&2 "Unknown/unsupported branch: '$branch'"
