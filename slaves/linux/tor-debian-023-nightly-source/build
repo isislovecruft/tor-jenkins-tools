@@ -1,0 +1,3 @@
+#!/bin/sh
+
+branch=0.2.3 "$(dirname "$0")"/../tor-debian-master-nightly-source/build
