@@ -52,6 +52,8 @@ natty		natty		1
 oneiric		oneiric		1
 precise		precise		1
 quantal		quantal		1
+raring		raring		1
+saucy		saucy		1
 EOF
 )
 	if [ -z "$result" ] ; then
