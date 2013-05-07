@@ -154,7 +154,7 @@ backport_all() {
 	(cd $dir;
 	  remove_apparmor
 	  rm debian/tor.maintscript
-	  dch "Remove debian/tor.maintscript - This will result in /etc/tor/tor-tsocks.conf being left behind on upgrades for forever.  It's what you pay for running a system with a dpkg that is very old."
+	  dch --append "Remove debian/tor.maintscript - This will result in /etc/tor/tor-tsocks.conf being left behind on upgrades for forever.  It's what you pay for running a system with a dpkg that is very old."
 	)
 	bp2 $pkg $dir $origtar
 
