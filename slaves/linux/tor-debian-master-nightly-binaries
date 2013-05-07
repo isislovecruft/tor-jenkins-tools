@@ -55,6 +55,13 @@ case "$ARCHITECTURE" in
     ;;
 esac
 
+case "$SUITE" in
+  squeeze)
+    # newer debhelper
+    SUITE=squeeze-backports
+    ;;
+esac
+
 dsc=$(dcmd --dsc "$srcchanges")
 
 mkdir build
