@@ -3,13 +3,11 @@
 set -e
 set -x
 
-if command -v eatmydata > /dev/null; then prefix=eatmydata; else prefix=""; fi
-
 case "$SUITE" in
   experimental)
-    $prefix apt-get install -y -t experimental -- clang
+    apt-get install -y -t experimental -- clang
     ;;
   *)
-    $prefix apt-get install -y -- clang
+    apt-get install -y -- clang
     ;;
 esac
