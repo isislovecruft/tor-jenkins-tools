@@ -96,7 +96,7 @@ set +e
 backport_all "$pkg" "$ddir" "$origtar" "$debian_version"
 for i in *.dsc; do
     dpkg-source -x "$i"
-    (cd "$ddir" && dpkg-genchanges -S) > ${i%.dsc}_src.changes
+    (cd "$ddir" && dpkg-genchanges -S -sa) > ${i%.dsc}_src.changes
     rm -r "$ddir"
 done
 
