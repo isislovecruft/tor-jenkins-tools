@@ -59,6 +59,7 @@ case "$SUITE" in
   squeeze)
     # newer debhelper
     SUITE=squeeze-backports
+    extra="$extra --build-dep-resolver=aptitude"
     ;;
 esac
 
