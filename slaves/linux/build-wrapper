@@ -9,8 +9,11 @@
 # Extra environment variables can be passed on by specifying their names on the command line.
 #
 #  - scripts to be run life in directories named after their jobname.
-#  - in those dirs, the setup script or directory will be run as root, build
-#    will be run as an unprivileged user.
+#  - in those dirs, the setup script or directory will be run outside the
+#    schroot.  The SESSION_ID variable has the name of the session we just
+#    created.
+#  - the build script/directory will be run as an unprivileged user inside
+#    the session.
 #  - If the item in question is a directory, run-parts will be used on it.
 
 set -u
@@ -71,14 +74,15 @@ fi
 
 # pass extra environment
 declare -a keep_env
+keep_env+=("SESSION_ID=$chroot")
 for i in "$@" SUITE; do
 	keep_env+=("$i=${!i}")
 done
 
 echo "Setup:"
 f="$jobdir/setup"
-if [ -d "$f" ]; then schroot --run-session --chroot "$chroot" -u root -- env "${keep_env[@]}" run-parts "$f";
-                else schroot --run-session --chroot "$chroot" -u root -- env "${keep_env[@]}" "$f"; fi
+if [ -d "$f" ]; then env "${keep_env[@]}" run-parts "$f";
+                else env "${keep_env[@]}" "$f"; fi
 echo "Build:"
 f="$jobdir/build"
 if [ -d "$f" ]; then schroot --run-session --chroot "$chroot"         -- env "${keep_env[@]}" run-parts "$f";

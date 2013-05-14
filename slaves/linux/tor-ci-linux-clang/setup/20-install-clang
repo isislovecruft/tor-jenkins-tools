@@ -5,9 +5,9 @@ set -x
 
 case "$SUITE" in
   experimental)
-    apt-get install -y -t experimental -- clang
+    dd-schroot-cmd -c "$SESSION_ID" -y -- apt-get install clang/experimental
     ;;
   *)
-    apt-get install -y -- clang
+    dd-schroot-cmd -c "$SESSION_ID" -y -- apt-get install clang
     ;;
 esac
