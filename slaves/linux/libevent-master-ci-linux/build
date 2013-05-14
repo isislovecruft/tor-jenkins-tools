@@ -2,6 +2,7 @@
 set -x
 set -e
 
+configure_args=""
 configure_args="$configure_args --enable-verbose-debug=${CONFIGURE_VERBOSE_DEBUG%-*}"
 configure_args="$configure_args --enable-thread-support=${CONFIGURE_THREAD_SUPPORT%-*}"
 configure_args="$configure_args --enable-malloc-replacement=${CONFIGURE_MALLOC_REPLACEMENT%-*}"
