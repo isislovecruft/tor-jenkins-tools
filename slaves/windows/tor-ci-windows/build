@@ -17,6 +17,7 @@ done
 PATH="`pwd`/UPSTREAM/usr/bin:$PATH"
 export PATH
 
+rm -rf build-tree
 mkdir build-tree
 cd build-tree
 
