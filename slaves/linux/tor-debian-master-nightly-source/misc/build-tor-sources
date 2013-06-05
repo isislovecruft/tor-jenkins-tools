@@ -158,12 +158,6 @@ backport_all() {
 	)
 	bp2 $pkg $dir $origtar
 
-	# NATTY  (EOL: October 2012)
-	#################################################
-	bp1 $pkg $dir $sid_debian_version natty
-	(cd $dir; remove_apparmor)
-	bp2 $pkg $dir $origtar
-
 	# ONEIRIC  (EOL: April 2013)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version oneiric
