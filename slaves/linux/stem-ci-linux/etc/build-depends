@@ -1,1 +1,1 @@
-python pyflakes
+python pyflakes python-mock
