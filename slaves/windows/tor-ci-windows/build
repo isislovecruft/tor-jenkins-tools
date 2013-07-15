@@ -30,8 +30,8 @@ cd build-tree
 	--disable-asciidoc \
 	--prefix=/usr \
 	CFLAGS='-g -O2 -Wno-error=redundant-decls'
-make
-make check
+make -k
+make -k check
 make DESTDIR="`pwd`/../RESULT" install
 cd ..
 
