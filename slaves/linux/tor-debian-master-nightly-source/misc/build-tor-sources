@@ -136,15 +136,20 @@ backport_all() {
 	#################################################
 	# null
 
-	# SQUEEZE
+	# JESSIE
 	#################################################
-	bp1 $pkg $dir $sid_debian_version squeeze
-	(cd $dir; remove_apparmor)
+	bp1 $pkg $dir $sid_debian_version jessie
 	bp2 $pkg $dir $origtar
 
 	# WHEEZY
 	#################################################
 	bp1 $pkg $dir $sid_debian_version wheezy
+	bp2 $pkg $dir $origtar
+
+	# SQUEEZE
+	#################################################
+	bp1 $pkg $dir $sid_debian_version squeeze
+	(cd $dir; remove_apparmor)
 	bp2 $pkg $dir $origtar
 
 
