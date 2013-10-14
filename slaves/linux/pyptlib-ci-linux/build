@@ -3,12 +3,7 @@ set -x
 set -e
 
 python setup.py build
-
-for i in pyptlib/test/* ; do
-	echo === $i ===
-	PYTHONPATH=. python $i
-done
-
+python setup.py test
 python setup.py install --root="`pwd`/RESULT" --prefix=/usr --no-compile
 
 tar caf RESULT.pyptlib.tar.gz RESULT
