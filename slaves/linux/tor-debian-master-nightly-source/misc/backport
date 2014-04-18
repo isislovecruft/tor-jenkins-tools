@@ -56,6 +56,7 @@ precise		precise		1
 quantal		quantal		1
 raring		raring		1
 saucy		saucy		1
+trusty		trusty		1
 EOF
 )
 	if [ -z "$result" ] ; then
