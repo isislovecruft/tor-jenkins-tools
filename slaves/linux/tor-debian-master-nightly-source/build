@@ -82,7 +82,7 @@ rm -f *.tar.gz || true
 branch="${branch:-master}"
 case "$branch" in
   "master")
-    pkgrev=$(cd "$pkggitdir" && git checkout -q "$branch" && git rev-parse --short=16 HEAD)
+    pkgrev=$(cd "$pkggitdir" && git checkout -q "$branch" > /dev/null && git rev-parse --short=16 HEAD)
     distribution="$pkg-nightly-master"
     ;;
   "0.2.4")
