@@ -106,6 +106,13 @@ remove_apparmor() {
 	fi
 }
 
+remove_libseccomp() {
+	if grep -q libseccomp-dev debian/control; then
+		sed -i -e '/^Build-Depends/ s/, *libseccomp-dev//' debian/control
+		dch --append "Remove libseccomp-dev build dependency for backport."
+	fi
+}
+
 bp1() {
 	local pkg="$1"; shift
 	local dir="$1"; shift
@@ -144,20 +151,23 @@ backport_all() {
 	# WHEEZY
 	#################################################
 	bp1 $pkg $dir $sid_debian_version wheezy
+	(cd $dir; remove_libseccomp)
 	bp2 $pkg $dir $origtar
 
 	# SQUEEZE
 	#################################################
 	bp1 $pkg $dir $sid_debian_version squeeze
 	(cd $dir; remove_apparmor)
+	(cd $dir; remove_libseccomp)
 	bp2 $pkg $dir $origtar
 
 
 	# LUCID  (EOL: April 2015)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version lucid
+	(cd $dir; remove_apparmor)
+	(cd $dir; remove_libseccomp)
 	(cd $dir;
-	  remove_apparmor
 	  rm debian/tor.maintscript
 	  dch --append "Remove debian/tor.maintscript - This will result in /etc/tor/tor-tsocks.conf being left behind on upgrades for forever.  It's what you pay for running a system with a dpkg that is very old."
 	)
@@ -167,26 +177,31 @@ backport_all() {
 	#################################################
 	bp1 $pkg $dir $sid_debian_version oneiric
 	(cd $dir; remove_apparmor 1) # dh_apparmor is in their patched debhelper
+	(cd $dir; remove_libseccomp)
 	bp2 $pkg $dir $origtar
 
 	# PRECISE  (EOL: April 2017)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version precise
+	(cd $dir; remove_libseccomp)
 	bp2 $pkg $dir $origtar
 
 	# QUANTAL  (EOL: April 2014)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version quantal
+	(cd $dir; remove_libseccomp)
 	bp2 $pkg $dir $origtar
 
 	# RARING  (EOL: January 2014)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version raring
+	(cd $dir; remove_libseccomp)
 	bp2 $pkg $dir $origtar
 
 	# SAUCY  (EOL: July 2014)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version saucy
+	(cd $dir; remove_libseccomp)
 	bp2 $pkg $dir $origtar
 
 	# TRUSTY (EOL: April 2019)
@@ -203,6 +218,7 @@ backport_all() {
 		# SQUEEZE-BPO
 		#################################################
 		bp1 $pkg $dir $sid_debian_version squeeze-bpo
+		(cd $dir; remove_libseccomp)
 		bp2 $pkg $dir $origtar
 
 		mkdir bpo
