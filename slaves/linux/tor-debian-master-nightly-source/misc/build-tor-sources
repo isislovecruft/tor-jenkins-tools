@@ -108,7 +108,7 @@ remove_apparmor() {
 
 remove_libseccomp() {
 	if grep -q libseccomp-dev debian/control; then
-		sed -i -e '/^Build-Depends/ s/, *libseccomp-dev//' debian/control
+		sed -i -e '/^Build-Depends/ s/, *libseccomp-dev\( *\[[^]]*\]\)\?//' debian/control
 		dch --append "Remove libseccomp-dev build dependency for backport."
 	fi
 }
