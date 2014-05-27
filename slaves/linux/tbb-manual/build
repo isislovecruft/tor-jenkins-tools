@@ -1,0 +1,27 @@
+#!/bin/bash
+
+cleanup() {
+    if [ -n "$base" ]; then
+        cd "$base"
+        rm -rf user-manual tor-browser-bundle
+    fi
+}
+
+trap 'cleanup' EXIT
+
+set -e
+set -u
+set -x
+
+base=$(pwd)
+
+(
+cd "$base/user-manual"
+autoreconf -vif
+./configure --with-tor-browser-bundle=../tor-browser-bundle
+make html
+)
+
+mkdir "$base/RESULT"
+(cd "$base/user-manual" && tar caf "$base/RESULT/html.tar.gz" html)
+
