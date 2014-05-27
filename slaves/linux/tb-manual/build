@@ -8,6 +8,7 @@ cleanup() {
 }
 
 trap 'cleanup' EXIT
+rm -rf "$base/RESULT"
 
 set -e
 set -u
