@@ -8,13 +8,13 @@ cleanup() {
 }
 
 trap 'cleanup' EXIT
-rm -rf "$base/RESULT"
 
 set -e
 set -u
 set -x
 
 base=$(pwd)
+rm -rf "$base/RESULT"
 
 (
 cd "$base/user-manual"
