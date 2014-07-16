@@ -173,28 +173,9 @@ backport_all() {
 	)
 	bp2 $pkg $dir $origtar
 
-	# ONEIRIC  (EOL: April 2013)
-	#################################################
-	bp1 $pkg $dir $sid_debian_version oneiric
-	(cd $dir; remove_apparmor 1) # dh_apparmor is in their patched debhelper
-	(cd $dir; remove_libseccomp)
-	bp2 $pkg $dir $origtar
-
 	# PRECISE  (EOL: April 2017)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version precise
-	(cd $dir; remove_libseccomp)
-	bp2 $pkg $dir $origtar
-
-	# QUANTAL  (EOL: April 2014)
-	#################################################
-	bp1 $pkg $dir $sid_debian_version quantal
-	(cd $dir; remove_libseccomp)
-	bp2 $pkg $dir $origtar
-
-	# RARING  (EOL: January 2014)
-	#################################################
-	bp1 $pkg $dir $sid_debian_version raring
 	(cd $dir; remove_libseccomp)
 	bp2 $pkg $dir $origtar
 
