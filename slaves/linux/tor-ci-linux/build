@@ -3,6 +3,8 @@ set -x
 set -e
 
 ./autogen.sh
-./configure --enable-gcc-warnings --disable-silent-rules
+mkdir build-tree
+cd build-tree
+../configure --enable-gcc-warnings --disable-silent-rules
 make -k
 make -k check
