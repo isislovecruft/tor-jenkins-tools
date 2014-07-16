@@ -249,7 +249,7 @@ main() {
 	fi
 	tar xzf $origtar
 	git clone -n -s "$gitdir" git-"$dir"
-	local tag="debian-${pkg}-$dir_version-$deb_revision"
+	local tag="debian-${pkg}-$dir_version-${deb_revision//\~/_}"
 	(cd "git-$dir" && git checkout $tag)
 	if diff -qr "git-$dir" "$dir" --exclude .git  | grep -v '^Only in ' | grep --color .; then
 		echo "Differenced detected."
