@@ -3,8 +3,8 @@ set -x
 set -e
 
 ./autogen.sh
-mkdir build-tree
-cd build-tree
+mkdir build-tree-tor
+cd build-tree-tor
 ../configure --enable-gcc-warnings --disable-silent-rules
 make -k
 make -k check
