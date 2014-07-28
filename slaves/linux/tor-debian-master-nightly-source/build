@@ -93,10 +93,6 @@ case "$branch" in
     merge_release_maint "$pkggitdir" release-0.2.4 maint-0.2.4
     distribution="$pkg-nightly-0.2.4.x"
     ;;
-  "0.2.3")
-    merge_release_maint "$pkggitdir" release-0.2.3 maint-0.2.3
-    distribution="$pkg-nightly-0.2.3.x"
-    ;;
   *)
     echo >&2 "Unknown/unsupported branch: '$branch'"
     exit 1
