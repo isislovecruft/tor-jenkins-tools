@@ -4,6 +4,8 @@ set -e
 set -x
 set -u
 
+rm -rf blog-snippets.wmi RESULT
+
 thisscriptdir=$(dirname "$0")
 thisscriptdir=$(readlink -f "$thisscriptdir")
 "$thisscriptdir"/make-recent-posts > blog-snippets.wmi
