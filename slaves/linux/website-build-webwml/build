@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+set -x
+set -u
+
+thisdir=$(dirname "$0")
+thisdir=$(readlink -f "$thisdir")
+
+torgit="$thisdir/tor"
+torrev=(cd tor && git rev-parse HEAD)
+webwmlrev=(cd webwml && git rev-parse HEAD)
+
+(
+cd webwml
+cp "$thisdir"/incoming/blog-snippets.wmi include/blog-recent.wmi
+echo "export TORGIT=$torgit/.git" > Makefile.local
+make
+mkdir -p project/trace
+( date -u
+  echo "Built on `hostname`."
+  echo "Based on webwml:$webwmlrev, tor:$torrev."
+) > project/trace/jenkins.torproject.org
+rm -rf .git
+)
+
+mkdir RESULT
+tar caf RESULT/webwml.tar.gz webwml
