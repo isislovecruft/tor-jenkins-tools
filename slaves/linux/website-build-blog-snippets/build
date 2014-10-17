@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+set -x
+set -u
+
+./make-recent-posts > blog-snippets.wmi
+
+mkdir RESULT
+mv blog-snippets.wmi RESULT
