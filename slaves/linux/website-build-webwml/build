@@ -4,15 +4,24 @@ set -e
 set -x
 set -u
 
-workspace=$(pwd)
+cleanup() {
+    if [ -n "$base" ]; then
+        cd "$base"
+        rm -rf tor webwml incoming
+    fi
+}
+base=$(pwd)
 
-torgit="$workspace/tor"
+trap 'cleanup' EXIT
+rm -rf RESULT
+
+torgit="$base/tor"
 torrev=$(cd tor && git rev-parse HEAD)
 webwmlrev=$(cd webwml && git rev-parse HEAD)
 
 (
 cd webwml
-cp "$workspace"/incoming/blog-snippets.wmi include/blog-recent.wmi
+cp "$base"/incoming/blog-snippets.wmi include/blog-recent.wmi
 echo "export TORGIT=$torgit/.git" > Makefile.local
 make
 mkdir -p project/trace
