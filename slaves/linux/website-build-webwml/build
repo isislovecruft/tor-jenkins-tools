@@ -8,8 +8,8 @@ thisdir=$(dirname "$0")
 thisdir=$(readlink -f "$thisdir")
 
 torgit="$thisdir/tor"
-torrev=(cd tor && git rev-parse HEAD)
-webwmlrev=(cd webwml && git rev-parse HEAD)
+torrev=$(cd tor && git rev-parse HEAD)
+webwmlrev=$(cd webwml && git rev-parse HEAD)
 
 (
 cd webwml
