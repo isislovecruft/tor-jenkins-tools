@@ -4,16 +4,15 @@ set -e
 set -x
 set -u
 
-thisdir=$(dirname "$0")
-thisdir=$(readlink -f "$thisdir")
+workspace=$(pwd)
 
-torgit="$thisdir/tor"
+torgit="$workspace/tor"
 torrev=$(cd tor && git rev-parse HEAD)
 webwmlrev=$(cd webwml && git rev-parse HEAD)
 
 (
 cd webwml
-cp "$thisdir"/incoming/blog-snippets.wmi include/blog-recent.wmi
+cp "$workspace"/incoming/blog-snippets.wmi include/blog-recent.wmi
 echo "export TORGIT=$torgit/.git" > Makefile.local
 make
 mkdir -p project/trace
