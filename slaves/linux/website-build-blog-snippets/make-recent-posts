@@ -33,7 +33,7 @@ my $authorStr = $data;
 print "<div class='blogFeed'>
   <div class='blogFirstRow'>
   <h2>Recent Blog Posts</h2>
-  </div>";
+  </div><div class=\"fauxhead\"></div>";
 
 # Generate posts
 for my $i (0..$showPosts) {
