@@ -190,6 +190,11 @@ backport_all() {
 	bp1 $pkg $dir $sid_debian_version trusty
 	bp2 $pkg $dir $origtar
 
+	# UTOPIC (EOL: July 2015)
+	#################################################
+	bp1 $pkg $dir $sid_debian_version utopic
+	bp2 $pkg $dir $origtar
+
 
 	#################################################
 	## BPO
