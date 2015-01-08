@@ -2,7 +2,7 @@
 set -x
 set -e
 
-case "$ARCHITECTURE" in
+case "`dpkg --print-architecture`" in
   i386)
     host=i686-w64-mingw32
     ;;
