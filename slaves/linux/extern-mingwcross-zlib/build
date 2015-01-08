@@ -22,6 +22,7 @@ cd zlib
 make -f win32/Makefile.gcc \
   ${OPTS} \
   PREFIX="$host-" \
+  BINARY_PATH=/bin INCLUDE_PATH=/include LIBRARY_PATH=/lib \
   SHARED_MODE=1 \
   LOC="-fstack-protector-all -Wstack-protector --param ssp-buffer-size=4 -fno-strict-overflow -Wno-missing-field-initializers -Wformat -Wformat-security -Wl,--dynamicbase -Wl,--nxcompat -lssp" \
   DESTDIR="$BASE/RESULT" \
