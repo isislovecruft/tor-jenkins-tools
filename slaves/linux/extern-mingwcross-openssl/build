@@ -1,0 +1,34 @@
+#!/bin/sh
+set -x
+set -e
+
+case "`dpkg --print-architecture`" in
+  i386)
+    host=i686-w64-mingw32
+    mingw=mingw
+    ;;
+  amd64)
+    host=x86_64-w64-mingw32
+    mingw=mingw64
+    ;;
+  *)
+    echo >&2 "Unexpected architecture $ARCHITECTURE."
+    exit 1
+    ;;
+esac
+
+BASE="`pwd`"
+(
+  cd openssl
+  ./Configure \
+    -shared \
+    --cross-compile-prefix="$host-" \
+    "$mingw" \
+    "-fstack-protector-all -Wstack-protector --param ssp-buffer-size=4 -fno-strict-overflow -Wno-missing-field-initializers -Wformat -Wformat-security -Wl,--dynamicbase -Wl,--nxcompat -lssp" \
+    --prefix=$BASE/RESULT
+  make
+  make install
+)
+
+tar czf RESULT.zlib.tar.gz RESULT
+
