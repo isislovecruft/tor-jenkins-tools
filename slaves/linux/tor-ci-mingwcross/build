@@ -16,6 +16,7 @@ case "$arch" in
     ;;
 esac
 
+rm -rf UPSTREAM RESULT
 for lib in zlib openssl libevent; do
   tb="ARCHITECTURE=$arch,SUITE=$SUITE"/RESULT.$lib.tar.gz
   if ! [ -e "$tb" ]; then
@@ -35,9 +36,10 @@ BASE="`pwd`"
     --host="$host" \
     --with-libevent-dir="$BASE/UPSTREAM" \
     --with-openssl-dir="$BASE/UPSTREAM" \
-    --with-zlib-dir="$BASE/UPSTREAM"
+    --with-zlib-dir="$BASE/UPSTREAM" \
+    --prefix=/
   make install DESTDIR="$BASE/RESULT"
-  cp src/test/test.exe "$BASE/RESULT/bin"
+  cp src/test/test.exe "$BASE/RESULT/bin/"
 )
 
 tar czf RESULT.tor.tar.gz RESULT
