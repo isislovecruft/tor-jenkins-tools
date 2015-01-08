@@ -19,7 +19,7 @@ BASE="`pwd`"
 (
   cd libevent
   ./autogen.sh
-  ./configure --disable-static --host="$host" --prefix="$BASE/RESULT"
+  ./configure --disable-static --host="$host" --prefix="$BASE/RESULT" || true
   make install
 )
 
