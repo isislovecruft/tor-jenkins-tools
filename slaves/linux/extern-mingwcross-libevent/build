@@ -18,8 +18,8 @@ esac
 BASE="`pwd`"
 (
   cd libevent
-  ./autogen.sh
-  ./configure --disable-static --host="$host" --prefix="$BASE/RESULT" || true
+  ./autogen.sh || true
+  ./configure --disable-static --host="$host" --prefix="$BASE/RESULT"
   make install
 )
 
