@@ -1,0 +1,28 @@
+#!/bin/sh
+set -x
+set -e
+
+case "$ARCHITECTURE" in
+  i386)
+    host=i686-w64-mingw32
+    ;;
+  amd64)
+    host=x86_64-w64-mingw32
+    ;;
+  *)
+    echo >&2 "Unexpected architecture $ARCHITECTURE."
+    exit 1
+    ;;
+esac
+
+BASE="`pwd`"
+OPTS="BINARY_PATH=/usr/bin INCLUDE_PATH=/usr/include LIBRARY_PATH=/usr/lib"
+make -f win32/Makefile.gcc \
+  ${OPTS} \
+  PREFIX="$host-" \
+  SHARED_MODE=1 \
+  LOC="-fstack-protector-all -Wstack-protector --param ssp-buffer-size=4 -fno-strict-overflow -Wno-missing-field-initializers -Wformat -Wformat-security -Wl,--dynamicbase -Wl,--nxcompat -lssp" \
+  install
+
+tar czf RESULT.zlib.tar.gz RESULT
+
