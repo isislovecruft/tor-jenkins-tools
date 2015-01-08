@@ -30,5 +30,5 @@ BASE="`pwd`"
   make install
 )
 
-tar czf RESULT.zlib.tar.gz RESULT
+tar czf RESULT.openssl.tar.gz RESULT
 
