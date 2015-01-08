@@ -23,5 +23,5 @@ BASE="`pwd`"
   make install
 )
 
-tar czf RESULT.libevent RESULT
+tar czf RESULT.libevent.tar.gz RESULT
 
