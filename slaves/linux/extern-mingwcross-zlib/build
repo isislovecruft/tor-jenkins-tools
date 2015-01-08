@@ -23,7 +23,7 @@ make -f win32/Makefile.gcc \
   PREFIX="$host-" \
   SHARED_MODE=1 \
   LOC="-fstack-protector-all -Wstack-protector --param ssp-buffer-size=4 -fno-strict-overflow -Wno-missing-field-initializers -Wformat -Wformat-security -Wl,--dynamicbase -Wl,--nxcompat -lssp" \
-  DESTDIR="$BASE/RESULT"
+  DESTDIR="$BASE/RESULT" \
   install
 
 tar czf RESULT.zlib.tar.gz RESULT
