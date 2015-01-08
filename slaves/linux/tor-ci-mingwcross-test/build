@@ -1,0 +1,45 @@
+#!/bin/sh
+set -x
+set -e
+
+arch="`dpkg --print-architecture`"
+case "$arch" in
+  i386)
+    host=i686-w64-mingw32
+    wine=wine32
+    ;;
+  amd64)
+    host=x86_64-w64-mingw32
+    wine=wine64
+    ;;
+  *)
+    echo >&2 "Unexpected architecture $ARCHITECTURE."
+    exit 1
+    ;;
+esac
+
+rm -rf UPSTREAM
+for upstream in zlib openssl libevent tor; do
+  tb="ARCHITECTURE=$arch,SUITE=$SUITE"/RESULT.$upstream.tar.gz
+  if ! [ -e "$tb" ]; then
+    echo >&2 "Did not find $tb."
+    exit 1
+  fi
+  tar xavf "$tb" --transform 's#^RESULT/#UPSTREAM/#'
+  rm "$tb"
+done
+
+mkdir run
+cp UPSTREAM/bin/*.dll run
+cp UPSTREAM/bin/test.exe run
+cp /usr/lib/gcc/$host/4.9-win32/libssp-0.dll run
+if [ "$arch" = i386 ]; then
+  cp /usr/lib/gcc/i686-w64-mingw32/4.9-win32/libgcc_s_sjlj-1.dll run
+fi
+
+rm -rf wine
+BASE="`pwd`"
+export WINEPREFIX="$BASE/wine"
+
+cd run
+"$wine" test.exe
