@@ -1,0 +1,43 @@
+#!/bin/sh
+set -x
+set -e
+
+arch="`dpkg --print-architecture`"
+case "$arch" in
+  i386)
+    host=i686-w64-mingw32
+    ;;
+  amd64)
+    host=x86_64-w64-mingw32
+    ;;
+  *)
+    echo >&2 "Unexpected architecture $ARCHITECTURE."
+    exit 1
+    ;;
+esac
+
+for lib in zlib openssl libevent; do
+  tb="ARCHITECTURE=$arch,SUITE=$SUITE"/RESULT.$lib.tar.gz
+  if ! [ -e "$tb" ]; then
+    echo >&2 "Did not find $tb."
+    exit 1
+  fi
+  tar xavf "$tb" --transform 's#^RESULT/#UPSTREAM/#'
+  rm "$tb"
+done
+
+BASE="`pwd`"
+(cd tor
+  ./autogen.sh
+  ./configure \
+    --disable-silent-rules \
+    --disable-asciidoc \
+    --host="$host" \
+    --with-libevent-dir="$BASE/UPSTREAM" \
+    --with-openssl-dir="$BASE/UPSTREAM" \
+    --with-zlib-dir="$BASE/UPSTREAM"
+  make install DESTDIR="$BASE/RESULT"
+  cp src/test/test.exe "$BASE/RESULT/bin"
+)
+
+tar czf RESULT.tor.tar.gz RESULT
