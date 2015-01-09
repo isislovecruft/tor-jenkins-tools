@@ -42,4 +42,10 @@ BASE="`pwd`"
   cp src/test/test.exe "$BASE/RESULT/bin/"
 )
 
+cp -v UPSTREAM/bin/*dll RESULT/bin
+cp -v /usr/lib/gcc/$host/4.9-win32/libssp-0.dll RESULT/bin/
+if [ "$arch" = i386 ]; then
+  cp -v /usr/lib/gcc/i686-w64-mingw32/4.9-win32/libgcc_s_sjlj-1.dll RESULT/bin/
+fi
+
 tar czf RESULT.tor.tar.gz RESULT
