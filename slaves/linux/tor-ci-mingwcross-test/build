@@ -19,7 +19,7 @@ case "$arch" in
 esac
 
 rm -rf UPSTREAM
-for upstream in zlib openssl libevent tor; do
+for upstream in tor; do
   tb="ARCHITECTURE=$arch,SUITE=$SUITE"/RESULT.$upstream.tar.gz
   if ! [ -e "$tb" ]; then
     echo >&2 "Did not find $tb."
@@ -30,16 +30,10 @@ for upstream in zlib openssl libevent tor; do
 done
 
 mkdir run
-cp UPSTREAM/bin/*.dll run
-cp UPSTREAM/bin/test.exe run
-cp /usr/lib/gcc/$host/4.9-win32/libssp-0.dll run
-if [ "$arch" = i386 ]; then
-  cp /usr/lib/gcc/i686-w64-mingw32/4.9-win32/libgcc_s_sjlj-1.dll run
-fi
+cp -l UPSTREAM/bin/* run
 
 rm -rf wine
-BASE="`pwd`"
-export WINEPREFIX="$BASE/wine"
+export WINEPREFIX="`pwd`/wine"
 
 cd run
 "$wine" test.exe
