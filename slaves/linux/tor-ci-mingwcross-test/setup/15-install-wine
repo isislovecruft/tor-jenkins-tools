@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+set -x
+
+case "$ARCHITECTURE" in
+  i386)
+    dd-schroot-cmd -c "$SESSION_ID" -y -- apt-get install wine32
+    ;;
+  amd64)
+    dd-schroot-cmd -c "$SESSION_ID" -y -- apt-get install wine64
+    ;;
+  *)
+    echo >&2 "Unexpected architecture $ARCHITECTURE."
+    exit 1
+    ;;
+esac
