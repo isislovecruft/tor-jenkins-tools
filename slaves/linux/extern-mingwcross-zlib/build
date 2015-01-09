@@ -16,11 +16,9 @@ case "`dpkg --print-architecture`" in
 esac
 
 BASE="`pwd`"
-OPTS="BINARY_PATH=/usr/bin INCLUDE_PATH=/usr/include LIBRARY_PATH=/usr/lib"
 (
 cd zlib
 make -f win32/Makefile.gcc \
-  ${OPTS} \
   PREFIX="$host-" \
   BINARY_PATH=/bin INCLUDE_PATH=/include LIBRARY_PATH=/lib \
   SHARED_MODE=1 \
