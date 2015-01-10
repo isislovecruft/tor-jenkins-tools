@@ -19,8 +19,9 @@ BASE="`pwd`"
 (
   cd libevent
   ./autogen.sh || true
-  ./configure --disable-static --host="$host" --prefix="$BASE/RESULT"
-  make install
+  ./configure --disable-static --host="$host" --prefix=/
+  make install \
+    DESTDIR="$BASE/RESULT"
 )
 
 tar czf RESULT.libevent.tar.gz RESULT
