@@ -1,0 +1,23 @@
+#!/bin/sh
+set -x
+set -e
+
+err=0
+for arch in i386 amd64; do
+  rm -rf RESULT
+  for upstream in tor; do
+    tb="ARCHITECTURE=$arch,SUITE=$SUITE"/RESULT.$upstream.tar.gz
+    if ! [ -e "$tb" ]; then
+      echo >&2 "Did not find $tb."
+      exit 1
+    fi
+    tar xavf "$tb"
+    rm "$tb"
+  done
+
+  echo "= $arch =================================="
+  RESULT/bin/test || err=1
+  echo "=========================================="
+done
+
+exit $err
