@@ -37,8 +37,9 @@ BASE="`pwd`"
     --with-libevent-dir="$BASE/UPSTREAM" \
     --with-openssl-dir="$BASE/UPSTREAM" \
     --with-zlib-dir="$BASE/UPSTREAM" \
-    --prefix=/
-  make install DESTDIR="$BASE/RESULT"
+    --prefix=/ \
+    --enable-gcc-warnings
+  make -k install DESTDIR="$BASE/RESULT"
   cp src/test/test.exe "$BASE/RESULT/bin/"
 )
 
