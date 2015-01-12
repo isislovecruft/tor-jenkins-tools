@@ -41,6 +41,7 @@ BASE="`pwd`"
     --enable-gcc-warnings
   make -k install DESTDIR="$BASE/RESULT"
   cp src/test/test.exe "$BASE/RESULT/bin/"
+  cp src/test/test-child.exe "$BASE/RESULT/bin/"
 )
 
 cp -v UPSTREAM/bin/*dll RESULT/bin
