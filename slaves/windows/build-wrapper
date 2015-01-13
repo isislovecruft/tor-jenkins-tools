@@ -2,6 +2,7 @@
 
 set -u
 set -e
+set -x
 
 check_arg() {
 	name="$1"; shift
@@ -12,11 +13,11 @@ check_arg() {
 		exit 1
 	fi
 	if [[ "$arg" =~ [^A-Za-z0-9.-] ]]; then
-		echo >&2 "Invalid $name: $arg."
+		echo >&2 "(1) Invalid $name: $arg."
 		exit 1
 	fi
-	if [[ "$arg" =~ \.\. ]]; then
-		echo >&2 "Invalid $name: $arg."
+	if echo "$arg" | grep -q -F ..; then
+		echo >&2 "(2) Invalid $name: $arg."
 		exit 1
 	fi
 }
