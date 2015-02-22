@@ -1,0 +1,9 @@
+autoconf
+automake
+libssl-dev
+zlib1g-dev
+libevent-dev
+asciidoc
+docbook-xml
+docbook-xsl
+xmlto

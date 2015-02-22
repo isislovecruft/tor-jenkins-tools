@@ -1,0 +1,11 @@
+#!/bin/sh
+set -x
+set -e
+
+(cd tor && ./autogen.sh)
+rm -rf build-tree-tor
+mkdir build-tree-tor
+cd build-tree-tor
+../tor/configure --enable-gcc-warnings --disable-silent-rules
+make -k
+make -k check

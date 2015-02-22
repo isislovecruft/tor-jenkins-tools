@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e
+set -u
+set -x
+
+branch="${branch:-master}"
+
+gittree="$HOME/vcs/tor.git"
+mkdir -p "$gittree"
+
+exec 200< "$gittree"
+if ! flock -e 200; then
+  echo 2>&1 "Cannot acquire lock."
+  exit 1
+fi
+
+if [ -e "$gittree/config" ]; then
+  (cd "$gittree" && git remote update)
+else
+  git clone https://git.torproject.org/tor.git --mirror "$gittree"
+fi
+
+rm -rf tor
+git clone --shared --branch "$branch" "$gittree" tor
