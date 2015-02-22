@@ -23,3 +23,5 @@ fi
 
 rm -rf tor
 git clone --shared --branch "$branch" "$gittree" tor
+echo 'HEAD is revision:'
+(cd tor && git rev-parse HEAD)
