@@ -7,5 +7,5 @@ rm -rf build-tree-tor
 mkdir build-tree-tor
 cd build-tree-tor
 ../tor/configure --enable-gcc-warnings --disable-silent-rules
-make -k -j4
-make -k -j4 check
+make -k -j2
+make -k -j2 check
