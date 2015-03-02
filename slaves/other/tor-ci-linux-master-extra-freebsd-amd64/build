@@ -1,0 +1,4 @@
+#!/bin/sh
+
+set -e
+exec ssh tor-jenkins@buildbot.pixelminers.net jenkins-tools/slaves/other/tor-ci-linux-master-extra-freebsd-amd64/build-remote
