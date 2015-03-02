@@ -1,1 +1,13 @@
-../linux/build-wrapper
+#!/bin/bash
+
+set -u
+set -e
+
+case "$NODE_NAME" in
+  buildbot.pixelminers.net)
+    exec ssh tor-jenkins@buildbot.pixelminers.net "$JOB_NAME"
+    ;;
+  *)
+    echo >&2 "Unknown node $NODE_NAME."
+    exit 1
+esac
