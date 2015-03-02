@@ -1,0 +1,33 @@
+#!/bin/sh
+
+set -x
+set -e
+set -u
+
+
+branch="${branch:-master}"
+
+gittree="$HOME/vcs/tor.git"
+mkdir -p "$gittree"
+
+if [ -e "$gittree/config" ]; then
+  (cd "$gittree" && lockf "$gittree.lock" git remote update)
+else
+  lockf "$gittree.lock" git clone https://git.torproject.org/tor.git --mirror "$gittree"
+fi
+
+mkdir -p ~/workspace/tor-$branch/
+cd ~/workspace/tor-$branch/
+
+rm -rf tor
+git clone --shared --branch "$branch" "$gittree" tor
+echo 'HEAD is revision:'
+(cd tor && git rev-parse HEAD)
+
+(cd tor && ./autogen.sh)
+rm -rf build-tree-tor
+mkdir build-tree-tor
+cd build-tree-tor
+../tor/configure --enable-gcc-warnings --disable-silent-rules --disable-asciidoc
+make -k -j4
+make -k -j4 check
