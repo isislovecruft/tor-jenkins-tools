@@ -8,4 +8,10 @@ mkdir build-tree-tor
 cd build-tree-tor
 ../tor/configure --enable-gcc-warnings --disable-silent-rules
 make -k -j4
-make -k -j4 check
+if ! make -k check; then
+  for i in src/test/*.log; do
+    echo "=== $i ==="
+    cat $i
+  done
+  exit 1
+fi
