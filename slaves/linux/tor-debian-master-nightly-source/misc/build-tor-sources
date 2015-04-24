@@ -179,12 +179,6 @@ backport_all() {
 	(cd $dir; remove_libseccomp)
 	bp2 $pkg $dir $origtar
 
-	# SAUCY  (EOL: July 2014)
-	#################################################
-	bp1 $pkg $dir $sid_debian_version saucy
-	(cd $dir; remove_libseccomp)
-	bp2 $pkg $dir $origtar
-
 	# TRUSTY (EOL: April 2019)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version trusty
@@ -193,6 +187,11 @@ backport_all() {
 	# UTOPIC (EOL: July 2015)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version utopic
+	bp2 $pkg $dir $origtar
+
+	# VIVID (EOL: Jan 2016)
+	#################################################
+	bp1 $pkg $dir $sid_debian_version vivid
 	bp2 $pkg $dir $origtar
 
 
