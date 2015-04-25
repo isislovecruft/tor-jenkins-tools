@@ -34,6 +34,7 @@ lenny		d50.lenny	1
 squeeze		d60.squeeze	1
 wheezy		d70.wheezy	1
 jessie		d80.jessie	1
+stretch		d89.stretch	1
 
 lenny-bpo	bpo50		1	lenny-backports
 squeeze-bpo	bpo60		1	squeeze-backports

@@ -143,6 +143,11 @@ backport_all() {
 	#################################################
 	# null
 
+	# STRETCH
+	#################################################
+	bp1 $pkg $dir $sid_debian_version stretch
+	bp2 $pkg $dir $origtar
+
 	# JESSIE
 	#################################################
 	bp1 $pkg $dir $sid_debian_version jessie
