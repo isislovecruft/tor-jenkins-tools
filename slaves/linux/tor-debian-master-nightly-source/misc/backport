@@ -40,6 +40,7 @@ lenny-bpo	bpo50		1	lenny-backports
 squeeze-bpo	bpo60		1	squeeze-backports
 wheezy-bpo	bpo70		1	wheezy-backports
 jessie-bpo	bpo80		1	jessie-backports
+stretch-bpo	bpo89		1	stretch-backports
 
 dapper		dapper		1
 edgy		edgy		1
