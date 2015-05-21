@@ -202,11 +202,13 @@ backport_all() {
 	# TRUSTY (EOL: April 2019)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version trusty
+	(cd $dir; remove_systemd)
 	bp2 $pkg $dir $origtar
 
 	# UTOPIC (EOL: July 2015)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version utopic
+	(cd $dir; remove_systemd)
 	bp2 $pkg $dir $origtar
 
 	# VIVID (EOL: Jan 2016)
