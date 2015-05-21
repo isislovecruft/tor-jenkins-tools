@@ -126,6 +126,10 @@ remove_systemd() {
 		sed -i -e '/^Build-Depends/ s/, *libsystemd-dev\( *\[[^]]*\]\)\?//' debian/control
 		dch --append "Remove libsystemd-dev build dependency for backport."
 	fi
+	if grep -q pkg-config debian/control; then
+		sed -i -e '/^Build-Depends/ s/, *pkg-config\( *\[[^]]*\]\)\?//' debian/control
+		dch --append "Remove pkg-configu build dependency for backport."
+	fi
 	if grep -q -- "--enable-systemd" debian/rules; then
 		sed -i -e '/----enable-systemd/ d' debian/rules
 		dch --append "Remove --enable-systemd from debian/rules"
