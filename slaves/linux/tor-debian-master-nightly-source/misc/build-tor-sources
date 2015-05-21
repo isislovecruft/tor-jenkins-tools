@@ -131,7 +131,7 @@ remove_systemd() {
 		dch --append "Remove pkg-configu build dependency for backport."
 	fi
 	if grep -q -- "--enable-systemd" debian/rules; then
-		sed -i -e '/----enable-systemd/ d' debian/rules
+		sed -i -e '/--enable-systemd/ d' debian/rules
 		dch --append "Remove --enable-systemd from debian/rules"
 	fi
 }
