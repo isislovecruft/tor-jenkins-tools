@@ -113,7 +113,7 @@ remove_libseccomp() {
 	fi
 }
 
-remove_dh_systemd() {
+remove_systemd() {
 	if grep -q dh-systemd debian/control; then
 		sed -i -e '/^Build-Depends/ s/, *dh-systemd\( *\[[^]]*\]\)\?//' debian/control
 		dch --append "Remove dh-systemd build dependency for backport."
@@ -121,6 +121,14 @@ remove_dh_systemd() {
 	if grep -q -- "--with systemd" debian/rules; then
 		sed -i -e '/--with systemd/ d' debian/rules
 		dch --append "Remove --with systemd from debian/rules"
+	fi
+	if grep -q libsystemd-dev debian/control; then
+		sed -i -e '/^Build-Depends/ s/, *libsystemd-dev\( *\[[^]]*\]\)\?//' debian/control
+		dch --append "Remove libsystemd-dev build dependency for backport."
+	fi
+	if grep -q -- "--enable-systemd" debian/rules; then
+		sed -i -e '/----enable-systemd/ d' debian/rules
+		dch --append "Remove --enable-systemd from debian/rules"
 	fi
 }
 
@@ -168,7 +176,7 @@ backport_all() {
 	#################################################
 	bp1 $pkg $dir $sid_debian_version wheezy
 	(cd $dir; remove_libseccomp)
-	(cd $dir; remove_dh_systemd)
+	(cd $dir; remove_systemd)
 	bp2 $pkg $dir $origtar
 
 	# SQUEEZE
@@ -176,7 +184,7 @@ backport_all() {
 	bp1 $pkg $dir $sid_debian_version squeeze
 	(cd $dir; remove_apparmor)
 	(cd $dir; remove_libseccomp)
-	(cd $dir; remove_dh_systemd)
+	(cd $dir; remove_systemd)
 	bp2 $pkg $dir $origtar
 
 
@@ -184,7 +192,7 @@ backport_all() {
 	#################################################
 	bp1 $pkg $dir $sid_debian_version precise
 	(cd $dir; remove_libseccomp)
-	(cd $dir; remove_dh_systemd)
+	(cd $dir; remove_systemd)
 	bp2 $pkg $dir $origtar
 
 	# TRUSTY (EOL: April 2019)
@@ -212,7 +220,7 @@ backport_all() {
 		#################################################
 		bp1 $pkg $dir $sid_debian_version squeeze-bpo
 		(cd $dir; remove_libseccomp)
-		(cd $dir; remove_dh_systemd)
+		(cd $dir; remove_systemd)
 		bp2 $pkg $dir $origtar
 
 		mkdir bpo
