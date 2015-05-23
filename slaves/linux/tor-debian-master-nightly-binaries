@@ -58,8 +58,11 @@ esac
 case "$SUITE" in
   squeeze)
     # newer debhelper
-    SUITE=squeeze-backports
+    BUILD_SUITE=squeeze-backports
     extra="$extra --build-dep-resolver=aptitude"
+    ;;
+  *)
+    BUILD_SUITE="$SUITE"
     ;;
 esac
 
@@ -71,7 +74,19 @@ cd build
 dsc=$(basename "$dsc")
 metadata=$(get_metadata "$dsc")
 read dscdist debian_version <<< "$metadata"
-sbuild --arch="$ARCHITECTURE" --dist="$SUITE" --nolog --apt-update $extra "$dsc"
+
+case "$SUITE" in
+  squeeze)
+    if dpkg --compare-versions "$debian_version" '>=' 0.2.7 ; then
+      cd ..
+      mkdir RESULT
+      touch RESULT/not-building-0.2.7-on-squeeze
+      exit 0
+    fi
+    ;;
+esac
+
+sbuild --arch="$ARCHITECTURE" --dist="$BUILD_SUITE" --nolog --apt-update $extra "$dsc"
 
 changes=$(ls -1 *.changes)
 if [ "$(echo "$changes" | wc -l)" != 1 ] || [ -z "$changes" ] ; then
