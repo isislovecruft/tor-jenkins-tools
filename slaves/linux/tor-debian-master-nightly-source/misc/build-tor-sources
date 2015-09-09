@@ -134,8 +134,8 @@ remove_systemd() {
 		sed -i -e '/--enable-systemd/ d' debian/rules
 		dch --append "Remove --enable-systemd from debian/rules"
 	fi
-	if grep -q -- "debian/tor.service" debian/tor.install; then
-		sed -i -e '/debian\/tor.service/ d' debian/tor.install
+	if grep -q -- "^debian/tor\.service[[:space:]]" debian/tor.install; then
+		sed -i -e '/^debian\/tor\.service[[:space:]]/ d' debian/tor.install
 		dch --append "Remove debian/tor.service from debian/tor.install"
 	fi
 	if [ -e debian/tor.service ]; then
