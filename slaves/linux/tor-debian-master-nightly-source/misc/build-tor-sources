@@ -193,11 +193,11 @@ backport_all() {
 
 	# SQUEEZE
 	#################################################
-	bp1 $pkg $dir $sid_debian_version squeeze
-	(cd $dir; remove_apparmor)
-	(cd $dir; remove_libseccomp)
-	(cd $dir; remove_systemd)
-	bp2 $pkg $dir $origtar
+	#bp1 $pkg $dir $sid_debian_version squeeze
+	#(cd $dir; remove_apparmor)
+	#(cd $dir; remove_libseccomp)
+	#(cd $dir; remove_systemd)
+	#bp2 $pkg $dir $origtar
 
 
 	# PRECISE  (EOL: April 2017)
@@ -228,17 +228,17 @@ backport_all() {
 	## BPO
 	#################################################
 
-	if [ "${DO_BPO:-}" = 1 ]; then
-		# SQUEEZE-BPO
-		#################################################
-		bp1 $pkg $dir $sid_debian_version squeeze-bpo
-		(cd $dir; remove_libseccomp)
-		(cd $dir; remove_systemd)
-		bp2 $pkg $dir $origtar
-
-		mkdir bpo
-		mv *'~bpo'* bpo/
-	fi
+	#if [ "${DO_BPO:-}" = 1 ]; then
+	#	# SQUEEZE-BPO
+	#	#################################################
+	#	bp1 $pkg $dir $sid_debian_version squeeze-bpo
+	#	(cd $dir; remove_libseccomp)
+	#	(cd $dir; remove_systemd)
+	#	bp2 $pkg $dir $origtar
+	#
+	#	mkdir bpo
+	#	mv *'~bpo'* bpo/
+	#fi
 }
 
 main() {
