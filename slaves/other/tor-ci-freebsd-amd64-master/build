@@ -29,5 +29,5 @@ rm -rf build-tree-tor
 mkdir build-tree-tor
 cd build-tree-tor
 ../tor/configure --enable-gcc-warnings --disable-silent-rules --disable-asciidoc
-make -k
-make -k check
+make
+make check
