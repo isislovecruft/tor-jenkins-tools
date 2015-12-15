@@ -31,7 +31,7 @@ cd build-tree
 	--prefix=/usr \
 	CFLAGS='-g -O2 -Wno-error=redundant-decls'
 make -k
-make -k check
+VERBOSE=yes make -k check
 make DESTDIR="`pwd`/../RESULT" install
 cd ..
 

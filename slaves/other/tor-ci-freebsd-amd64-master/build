@@ -31,4 +31,4 @@ cd build-tree-tor
 ../tor/configure --enable-gcc-warnings --disable-silent-rules --disable-asciidoc
 make -k
 make
-make check
+VERBOSE=yes make check

@@ -5,4 +5,4 @@ set -e
 ./autogen.sh
 ./configure
 make -k
-make -k check
+VERBOSE=yes make -k check

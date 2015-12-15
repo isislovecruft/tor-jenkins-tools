@@ -5,4 +5,4 @@ set -e
 ./autogen.sh
 ./configure --enable-gcc-warnings --disable-silent-rules CC=clang
 make -k
-make -k check
+VERBOSE=yes make -k check

@@ -7,4 +7,4 @@ mkdir build-tree-tor
 cd build-tree-tor
 ../configure --enable-gcc-warnings --disable-silent-rules
 make -k
-make -k check
+VERBOSE=yes make -k check

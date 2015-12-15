@@ -6,6 +6,6 @@ set -x
 ./autogen.sh # if we do not run a fresh autogen, libevent-2.0.21-stable will not build
 LDFLAGS="-Wl,--nxcompat -Wl,--dynamicbase" ./configure --prefix=/usr --enable-static --disable-shared
 make
-make check
+VERBOSE=yes make check
 make DESTDIR="`pwd`/RESULT" install
 tar czf RESULT.libevent.tar.gz RESULT
