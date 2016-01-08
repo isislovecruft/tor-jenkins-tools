@@ -154,6 +154,14 @@ remove_systemd() {
 		rm -fr debian/systemd
 		dch --append "Remove debian/systemd"
 	fi
+	if grep -q -- "^debian/tor-instance-create" debian/tor.install; then
+		sed -i -e '/^debian\/tor-instance-create/ d' debian/tor.install
+		dch --append "Remove debian/tor-instance-create from debian/tor.install"
+	fi
+	if grep -q -- "^debian/tor-instance-create.8" debian/tor.manpages; then
+		sed -i -e '/^debian\/tor-instance-create.8/ d' debian/tor.manpages
+		dch --append "Remove debian/tor-instance-create.8 from debian/tor.manpages"
+	fi
 }
 
 bp1() {
