@@ -146,6 +146,10 @@ remove_systemd() {
 		sed -i -e '/^debian\/systemd\// d' debian/tor.install
 		dch --append "Remove debian/systemd/* from debian/tor.install"
 	fi
+	if grep -q -- "chmod +x debian/systemd/tor-generator" debian/rules; then
+		sed -i -e '/chmod +x debian\/systemd\/tor-generator/ d' debian/rules
+		dch --append "Remove chmod +x debian/systemd/tor-generator from debian/rules"
+	fi
 	if [ -e debian/systemd ]; then
 		rm -fr debian/systemd
 		dch --append "Remove debian/systemd"
