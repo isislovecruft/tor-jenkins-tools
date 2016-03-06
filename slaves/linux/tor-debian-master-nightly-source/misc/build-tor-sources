@@ -91,21 +91,6 @@ hardening_backport() {
 	fi
 }
 
-remove_apparmor() {
-	local builddep_only="${1:-}"
-
-	if grep -q dh-apparmor debian/control; then
-		sed -i -e '/^Build-Depends/ s/, *dh-apparmor//' debian/control
-		if [ "$builddep_only" = 1 ]; then
-			dch --append "Remove dh-apparmor build dependency for backport."
-		else
-			sed -i -e 's/dh_apparmor/# &/' debian/rules
-			sed -i -e 's;install.*etc/apparmor.d;# &;' debian/rules
-			dch --append "Remove apparmor support for backport."
-		fi
-	fi
-}
-
 remove_libseccomp() {
 	if grep -q libseccomp-dev debian/control; then
 		sed -i -e '/^Build-Depends/ s/, *libseccomp-dev\( *\[[^]]*\]\)\?//' debian/control
@@ -210,14 +195,6 @@ backport_all() {
 	(cd $dir; remove_libseccomp)
 	(cd $dir; remove_systemd)
 	bp2 $pkg $dir $origtar
-
-	# SQUEEZE
-	#################################################
-	#bp1 $pkg $dir $sid_debian_version squeeze
-	#(cd $dir; remove_apparmor)
-	#(cd $dir; remove_libseccomp)
-	#(cd $dir; remove_systemd)
-	#bp2 $pkg $dir $origtar
 
 
 	# PRECISE  (EOL: April 2017)
@@ -333,7 +310,6 @@ main() {
 	cd local-build
 	dpkg-source -x ../${pkg}_$debian_version.dsc
 	cd ${pkg}-$debian_upstream_version
-	remove_apparmor
 	debuild -j8 -rfakeroot -uc -us
 	cd ../..
 
