@@ -1,0 +1,3 @@
+#!/bin/sh
+
+branch=maint-0.2.8 "$(dirname "$0")"/../tor-ci-freebsd-amd64-master/build
