@@ -6,4 +6,4 @@ set -u
 
 thisscriptdir=$(dirname "$0")
 thisscriptdir=$(readlink -f "$thisscriptdir")
-"$thisscriptdir"/../tor-ci-windows/build
+"$thisscriptdir"/../tor-ci-windows-master/build
