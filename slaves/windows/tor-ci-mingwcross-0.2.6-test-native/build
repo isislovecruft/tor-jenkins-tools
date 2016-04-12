@@ -6,4 +6,4 @@ set -u
 
 thisscriptdir=$(dirname "$0")
 thisscriptdir=$(readlink -f "$thisscriptdir")
-"$thisscriptdir"/../tor-ci-mingwcross-test-native/build
+"$thisscriptdir"/../tor-ci-mingwcross-master-test-native/build
