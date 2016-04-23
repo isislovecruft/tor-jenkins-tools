@@ -62,6 +62,7 @@ trusty		trusty		1
 utopic		utopic		1
 vivid		vivid		1
 wily		wily		1
+xenial		xenial		1
 EOF
 )
 	if [ -z "$result" ] ; then
