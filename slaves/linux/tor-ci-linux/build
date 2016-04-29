@@ -16,7 +16,7 @@ for cmd_idx in ${!configure_variants[*]}; do
 
   args="${configure_variants[$cmd_idx]}"
   (
-    set -- dummy "$args"
+    set dummy ${args}
     shift
 
     echo "======================================================="
