@@ -3,8 +3,8 @@ set -x
 set -e
 
 configure_variants=()
-configure_variants+=(--enable-gcc-warnings --disable-silent-rules)
-configure_variants+=(--enable-gcc-warnings --disable-silent-rules --enable-expensive-hardening)
+configure_variants+=("--enable-gcc-warnings --disable-silent-rules")
+configure_variants+=("--enable-gcc-warnings --disable-silent-rules --enable-expensive-hardening")
 
 ./autogen.sh
 
