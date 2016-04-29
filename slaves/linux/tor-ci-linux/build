@@ -1,10 +1,32 @@
-#!/bin/sh
+#!/bin/bash
 set -x
 set -e
 
+configure_variants=()
+configure_variants+=(--enable-gcc-warnings --disable-silent-rules)
+configure_variants+=(--enable-gcc-warnings --disable-silent-rules --enable-expensive-hardening)
+
 ./autogen.sh
-mkdir build-tree-tor
-cd build-tree-tor
-../configure --enable-gcc-warnings --disable-silent-rules
-make -k
-VERBOSE=yes make -k check
+
+for cmd_idx in ${!configure_variants[*]}; do
+  if [ -n "${CONFIGURE_VARIANT:-}" ] && [ "$cmd_idx" != "${CONFIGURE_VARIANT}" ]; then
+    echo "CONFIGURE_VARIANT is set to ${CONFIGURE_VARIANT}, skipping variant $cmd_idx."
+    continue
+  fi
+
+  args="${configure_variants[$cmd_idx]}"
+  (
+    set -- dummy "$args"
+    shift
+
+    echo "======================================================="
+    echo "== Running with $*"
+    echo "======================================================="
+    rm -rf build-tree-tor
+    mkdir build-tree-tor
+    cd build-tree-tor
+    ../configure "$@"
+    make -k
+    VERBOSE=yes make -k check
+  )
+done
