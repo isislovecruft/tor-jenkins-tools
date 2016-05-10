@@ -12,9 +12,16 @@ shift
 echo "======================================================="
 echo "== Running with configure $*"
 echo "======================================================="
-rm -rf build-tree-tor
-mkdir build-tree-tor
+
+rm -rf build-tree-tor RESULT
+mkdir build-tree-tor RESULT
+
+(
 cd build-tree-tor
 ../configure "$@"
 make -k
 VERBOSE=yes make -k check
+)
+
+rm -rf build-tree-tor
+cp build-tree-tor/src/or/tor RESULT
