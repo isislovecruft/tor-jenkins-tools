@@ -23,5 +23,5 @@ make -k
 VERBOSE=yes make -k check
 )
 
-rm -rf build-tree-tor
 cp build-tree-tor/src/or/tor RESULT
+rm -rf build-tree-tor
