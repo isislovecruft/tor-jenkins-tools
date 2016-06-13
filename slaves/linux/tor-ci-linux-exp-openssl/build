@@ -1,8 +1,1 @@
-#!/bin/sh
-set -x
-set -e
-
-./autogen.sh
-./configure --enable-gcc-warnings --disable-silent-rules CC=clang
-make -k
-VERBOSE=yes make -k check
+../tor-ci-linux/build
