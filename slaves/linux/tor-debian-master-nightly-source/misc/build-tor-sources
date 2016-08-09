@@ -210,11 +210,6 @@ backport_all() {
 	(cd $dir; remove_systemd)
 	bp2 $pkg $dir $origtar
 
-	# WILY (EOL: Jul 2016)
-	#################################################
-	bp1 $pkg $dir $sid_debian_version wily
-	bp2 $pkg $dir $origtar
-
 	# XENIAL (EOL: Jul 2016)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version xenial
