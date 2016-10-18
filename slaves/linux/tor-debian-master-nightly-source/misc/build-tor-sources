@@ -210,11 +210,15 @@ backport_all() {
 	(cd $dir; remove_systemd)
 	bp2 $pkg $dir $origtar
 
-	# XENIAL (EOL: Jul 2016)
+	# XENIAL (EOL: Apr 2021)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version xenial
 	bp2 $pkg $dir $origtar
 
+	# YAKKETY (EOL: Jul 2017)
+	#################################################
+	bp1 $pkg $dir $sid_debian_version yakkety
+	bp2 $pkg $dir $origtar
 
 	#################################################
 	## BPO
