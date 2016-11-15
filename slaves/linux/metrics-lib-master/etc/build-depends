@@ -1,4 +1,5 @@
 ant
+ant-optional
 cobertura
 default-jdk
 default-jre
