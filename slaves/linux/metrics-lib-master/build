@@ -4,4 +4,4 @@ set -e
 
 ln -s /usr/share/java lib
 
-ant -Djenkins=true -f build.xml test docs coverage jar
+ant -Djenkins=true -f build.xml test docs jar
