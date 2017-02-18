@@ -4,7 +4,7 @@ set -e
 
 configure_flags=${configure_flags:-"--enable-gcc-warnings --disable-silent-rules"}
 
-cd tor && ./autogen.sh
+(cd tor && ./autogen.sh)
 
 set dummy ${configure_flags}
 shift
