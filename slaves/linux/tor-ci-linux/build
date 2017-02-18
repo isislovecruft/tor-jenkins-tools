@@ -4,7 +4,7 @@ set -e
 
 configure_flags=${configure_flags:-"--enable-gcc-warnings --disable-silent-rules"}
 
-./autogen.sh
+cd tor && ./autogen.sh
 
 set dummy ${configure_flags}
 shift
@@ -18,9 +18,9 @@ mkdir build-tree-tor RESULT
 
 (
 cd build-tree-tor
-../configure "$@"
+../tor/configure "$@"
 make -k
-TOR_FUZZ_CORPORA=fuzzing-corpora VERBOSE=yes make -k check
+TOR_FUZZ_CORPORA=../fuzzing-corpora VERBOSE=yes make -k check
 )
 
 cp build-tree-tor/src/or/tor RESULT
