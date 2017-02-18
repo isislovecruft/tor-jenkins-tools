@@ -85,6 +85,10 @@ case "$branch" in
     pkgrev=$(cd "$pkggitdir" && git checkout -q "$branch" > /dev/null && git rev-parse --short=16 HEAD)
     distribution="$pkg-nightly-master"
     ;;
+  "0.3.0")
+    merge_release_maint "$pkggitdir" release-0.3.0 maint-0.3.0
+    distribution="$pkg-nightly-0.3.0.x"
+    ;;
   "0.2.9")
     merge_release_maint "$pkggitdir" release-0.2.9 maint-0.2.9
     distribution="$pkg-nightly-0.2.9.x"
