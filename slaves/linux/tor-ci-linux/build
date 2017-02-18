@@ -20,7 +20,7 @@ mkdir build-tree-tor RESULT
 cd build-tree-tor
 ../configure "$@"
 make -k
-VERBOSE=yes make -k check
+TOR_FUZZ_CORPORA=fuzzing-corpora VERBOSE=yes make -k check
 )
 
 cp build-tree-tor/src/or/tor RESULT
