@@ -64,6 +64,7 @@ vivid		vivid		1
 wily		wily		1
 xenial		xenial		1
 yakkety		yakkety		1
+zesty		zesty		1
 EOF
 )
 	if [ -z "$result" ] ; then
