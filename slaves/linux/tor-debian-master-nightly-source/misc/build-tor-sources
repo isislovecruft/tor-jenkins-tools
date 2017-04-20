@@ -175,21 +175,21 @@ backport_all() {
 	local origtar="$1"; shift
 	local sid_debian_version="$1"; shift
 
-	# SID
+	# sid
 	#################################################
 	# null
 
-	# STRETCH
+	# stretch
 	#################################################
 	bp1 $pkg $dir $sid_debian_version stretch
 	bp2 $pkg $dir $origtar
 
-	# JESSIE
+	# jessie
 	#################################################
 	bp1 $pkg $dir $sid_debian_version jessie
 	bp2 $pkg $dir $origtar
 
-	# WHEEZY
+	# wheezy
 	#################################################
 	bp1 $pkg $dir $sid_debian_version wheezy
 	(cd $dir; remove_libseccomp)
@@ -197,25 +197,25 @@ backport_all() {
 	bp2 $pkg $dir $origtar
 
 
-	# PRECISE  (EOL: April 2017)
+	# precise  (EOL: April 2017)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version precise
 	(cd $dir; remove_libseccomp)
 	(cd $dir; remove_systemd)
 	bp2 $pkg $dir $origtar
 
-	# TRUSTY (EOL: April 2019)
+	# trusty (EOL: April 2019)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version trusty
 	(cd $dir; remove_systemd)
 	bp2 $pkg $dir $origtar
 
-	# XENIAL (EOL: Apr 2021)
+	# xenial (EOL: Apr 2021)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version xenial
 	bp2 $pkg $dir $origtar
 
-	# YAKKETY (EOL: Jul 2017)
+	# yakkety (EOL: Jul 2017)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version yakkety
 	bp2 $pkg $dir $origtar
