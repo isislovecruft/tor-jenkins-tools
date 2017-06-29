@@ -184,6 +184,11 @@ backport_all() {
 	bp1 $pkg $dir $sid_debian_version stretch
 	bp2 $pkg $dir $origtar
 
+	# buster
+	#################################################
+	bp1 $pkg $dir $sid_debian_version buster
+	bp2 $pkg $dir $origtar
+
 	# jessie
 	#################################################
 	bp1 $pkg $dir $sid_debian_version jessie
