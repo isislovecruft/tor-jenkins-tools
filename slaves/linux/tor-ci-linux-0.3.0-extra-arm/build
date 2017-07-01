@@ -1,3 +1,6 @@
 #!/bin/sh
 
-branch=maint-0.3.0 "$(dirname "$0")"/../tor-ci-linux-master-extra-arm/build
+dn=$(dirname "$0")
+branch=${dn#*/tor-ci-linux-}
+branch=${branch%-extra-arm}
+branch="$branch" "$dn"/../tor-ci-linux-master-extra-arm/build
