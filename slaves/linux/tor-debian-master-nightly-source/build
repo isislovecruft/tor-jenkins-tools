@@ -85,33 +85,9 @@ case "$branch" in
     pkgrev=$(cd "$pkggitdir" && git checkout -q "$branch" > /dev/null && git rev-parse --short=16 HEAD)
     distribution="$pkg-nightly-master"
     ;;
-  "0.3.0")
-    merge_release_maint "$pkggitdir" release-0.3.0 maint-0.3.0
-    distribution="$pkg-nightly-0.3.0.x"
-    ;;
-  "0.2.9")
-    merge_release_maint "$pkggitdir" release-0.2.9 maint-0.2.9
-    distribution="$pkg-nightly-0.2.9.x"
-    ;;
-  "0.2.8")
-    merge_release_maint "$pkggitdir" release-0.2.8 maint-0.2.8
-    distribution="$pkg-nightly-0.2.8.x"
-    ;;
-  "0.2.7")
-    merge_release_maint "$pkggitdir" release-0.2.7 maint-0.2.7
-    distribution="$pkg-nightly-0.2.7.x"
-    ;;
-  "0.2.6")
-    merge_release_maint "$pkggitdir" release-0.2.6 maint-0.2.6
-    distribution="$pkg-nightly-0.2.6.x"
-    ;;
-  "0.2.5")
-    merge_release_maint "$pkggitdir" release-0.2.5 maint-0.2.5
-    distribution="$pkg-nightly-0.2.5.x"
-    ;;
   *)
-    echo >&2 "Unknown/unsupported branch: '$branch'"
-    exit 1
+    merge_release_maint "$pkggitdir" release-"$branch" maint-"$branch"
+    distribution="$pkg-nightly-$branch.x"
     ;;
 esac
 
