@@ -3,4 +3,4 @@
 dn=$(dirname "$0")
 branch=${dn#*/tor-ci-linux-}
 branch=${branch%-extra-arm}
-branch="$branch" "$dn"/../tor-ci-linux-master-extra-arm/build
+branch="maint-$branch" "$dn"/../tor-ci-linux-master-extra-arm/build
