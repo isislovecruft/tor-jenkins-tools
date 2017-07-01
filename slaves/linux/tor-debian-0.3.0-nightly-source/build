@@ -1,3 +1,6 @@
 #!/bin/sh
 
-branch=0.3.0 "$(dirname "$0")"/../tor-debian-master-nightly-source/build
+dn=$(dirname "$0")
+branch=${dn#*/tor-debian-}
+branch=${branch%-nightly-source}
+branch="$branch" "$dn"/../tor-debian-master-nightly-source/build
