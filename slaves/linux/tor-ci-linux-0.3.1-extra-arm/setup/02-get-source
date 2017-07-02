@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 dn=$(dirname "$0")
 dn="$dn/.."
 branch=${dn#*/tor-ci-linux-}
