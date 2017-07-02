@@ -1,8 +1,0 @@
-#!/bin/sh
-set -x
-set -e
-
-./autogen.sh
-./configure --disable-silent-rules
-make -k
-VERBOSE=yes make -k check
