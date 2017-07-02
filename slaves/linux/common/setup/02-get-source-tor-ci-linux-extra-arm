@@ -4,7 +4,7 @@ set -e
 set -x
 
 dn=$(dirname "$0")
-dn="$(dirname "dn")"
+dn="$(dirname "$dn")"
 branch=${dn#*/tor-ci-linux-}
 branch=${branch%-extra-arm}
 branch="maint-$branch" "$dn"/../tor-ci-linux-master-extra-arm/setup/02-get-source
