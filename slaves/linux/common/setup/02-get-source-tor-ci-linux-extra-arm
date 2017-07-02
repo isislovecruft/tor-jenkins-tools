@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+dn=$(dirname "$0")
+dn="$dn/.."
+branch=${dn#*/tor-ci-linux-}
+branch=${branch%-extra-arm}
+branch="maint-$branch" "$dn"/../tor-ci-linux-master-extra-arm/setup/02-get-source
