@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+
+if [ "$#" != 2 ]; then
+  echo >&2 "Usage: $0 <src/template version> <new version>"
+  exit 1
+fi
+
+src="$1"; shift
+new="$1"; shift
+
+for i in other/tor-ci-freebsd-amd64-VER            \
+         windows/tor-ci-mingwcross-VER-test-native \
+         windows/tor-ci-windows-VER                \
+         linux/tor-debian-VER-nightly-source       \
+         linux/tor-ci-linux-VER                    \
+         linux/tor-ci-linux-VER-extra-arm          \
+         linux/tor-ci-mingwcross-VER-test          \
+         linux/tor-ci-linux-VER-clang              \
+         linux/tor-ci-mingwcross-VER               \
+         ; do
+  cp -av ${i/VER/$src}  ${i/VER/$new}
+done
+
+echo
+echo " - update other/wrappers/buildbot.pixelminers.net"
+echo " - Make sure deb.tpo knows about the tor-nightly-${new}.x distributions."
