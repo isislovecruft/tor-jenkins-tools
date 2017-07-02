@@ -202,13 +202,6 @@ backport_all() {
 	bp2 $pkg $dir $origtar
 
 
-	# precise  (EOL: April 2017)
-	#################################################
-	bp1 $pkg $dir $sid_debian_version precise
-	(cd $dir; remove_libseccomp)
-	(cd $dir; remove_systemd)
-	bp2 $pkg $dir $origtar
-
 	# trusty (EOL: April 2019)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version trusty
