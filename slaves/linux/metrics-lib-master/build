@@ -5,7 +5,6 @@ set -e
 cd metrics-lib
 
 ln -s /usr/share/java lib
-rmdir src/build
-ln -s ../../metrics-base src/build
+ln -s ../../../metrics-base/java src/build/
 
 ant -Djenkins=true -f build.xml test docs jar
