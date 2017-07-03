@@ -5,11 +5,11 @@ default-jdk
 default-jre
 git
 junit4
-libasm4-java=5.0.3-1
-libcommons-compress-java=1.9-1
-libcommons-lang3-java=3.3.2-1
+libasm4-java
+libcommons-compress-java
+libcommons-lang3-java
 libgoogle-gson-java
-libhamcrest-java=1.3-5
+libhamcrest-java
 liblogback-java
 liboro-java
 libslf4j-java
