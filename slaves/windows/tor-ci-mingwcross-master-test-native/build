@@ -3,7 +3,7 @@ set -x
 set -e
 
 err=0
-SUITE=jessie
+SUITE=stretch
 for arch in i386 amd64; do
   rm -rf RESULT
   for upstream in tor; do
