@@ -8,7 +8,7 @@ arch="`dpkg --print-architecture`"
 case "$arch" in
   i386)
     host=i686-w64-mingw32
-    wine=wine32
+    wine=wine
     ;;
   amd64)
     host=x86_64-w64-mingw32
