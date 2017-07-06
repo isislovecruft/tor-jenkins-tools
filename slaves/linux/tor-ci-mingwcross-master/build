@@ -45,9 +45,9 @@ BASE="`pwd`"
 )
 
 cp -v UPSTREAM/bin/*dll RESULT/bin
-install -v -m 755 /usr/lib/gcc/$host/4.9-win32/libssp-0.dll RESULT/bin/
+install -v -m 755 /usr/lib/gcc/$host/*-win32/libssp-0.dll RESULT/bin/
 if [ "$arch" = i386 ]; then
-  install -v -m 755 /usr/lib/gcc/i686-w64-mingw32/4.9-win32/libgcc_s_sjlj-1.dll RESULT/bin/
+  install -v -m 755 /usr/lib/gcc/$host/*-win32/libgcc_s_sjlj-1.dll RESULT/bin/
 fi
 
 tar czf RESULT.tor.tar.gz RESULT
