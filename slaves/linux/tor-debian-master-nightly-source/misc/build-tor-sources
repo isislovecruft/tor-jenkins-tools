@@ -1,6 +1,16 @@
 #!/bin/bash
 
-# helper script to build tor debian releases
+# helper script to build tor debian releases.
+#
+# Usage: [GITDIR=.../tor] $0 <orig.tar.gz> [debian-revision]
+#
+# Given a Tor git tree and an orig.tar.gz, builds a tor source package
+# and backport source packages for many Debian and Ubuntu suites.
+#
+# This script is used both manually by the maintainer, e.g. when preparing
+# uploads to security.d.o, as well as the Tor jenkins instance when building
+# release builds.  As of 2017, the latter only uses the backport_all function
+# from this script.
 
 # Copyright 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017 Peter Palfrader
 #
@@ -249,7 +259,7 @@ main() {
 	[ -d local-build ] || mkdir local-build
 
 	if [ -z "$origtar" ] ; then
-		echo "Usage: $0 <orig.tar.gz> [version]" >&2
+		echo "Usage: $0 <orig.tar.gz> [debian-revision]" >&2
 		exit 1;
 	fi
 
@@ -327,7 +337,11 @@ case "$(basename $0)" in
 	build-tor-sources)
 		set -e
 		set -x
-		GITDIR="$HOME/projects/tor/tor"
+		GITDIR="${GITDIR:-$HOME/projects/tor/tor}"
+		if ! [ -e "$GITDIR/.git" ] ; then
+			echo >&2 "\$GITDIR does not exist or does not have a .git.  It needs to point to the tor git repository."
+			exit 1
+		fi
 		PKG="tor"
 		DO_BPO=1
 		main "${1:-}" ${2:-1} $GITDIR $PKG
