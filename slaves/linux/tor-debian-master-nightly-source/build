@@ -157,7 +157,7 @@ backport_all "$pkg" "$ddir" "$origtar" "$build_version-1"
 
 # we do not want stretch and later builds on 0.2.[765]
 case "$branch" in
-  "0.2.7"|"0.2.6"| "0.2.5")
+  "0.2.5")
     rm -f "tor_${build_version}-1.dsc"
     rm -f "tor_${build_version}-1"*".stretch+1.dsc"
     rm -f "tor_${build_version}-1"*".buster+1.dsc"
