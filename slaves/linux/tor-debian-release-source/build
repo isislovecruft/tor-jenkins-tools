@@ -89,7 +89,7 @@ dpkg-source -b upstream $origtar
 # build them ALL
 ################
 ddir="${pkg}-${upstream_version}"
-PATH="$thisscriptdir/../tor-debian-master-nightly-source/misc:$PATH"
+PATH="$base/debian/misc:$thisscriptdir/../tor-debian-master-nightly-source/misc:$PATH"
 . "$(which build-tor-sources)"
 set -x
 set +e
