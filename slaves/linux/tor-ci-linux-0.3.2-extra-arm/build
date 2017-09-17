@@ -1,0 +1,3 @@
+#!/bin/sh
+
+"$(dirname "$0")"/../tor-ci-linux-master-extra-arm/build
