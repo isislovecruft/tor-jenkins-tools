@@ -7,3 +7,5 @@ asciidoc
 docbook-xml
 docbook-xsl
 xmlto
+liblzma-dev
+libzstd-dev
