@@ -13,7 +13,7 @@ fatal_warnings=1
 case "$branch" in
   0.2.8)
     case "$SUITE" in
-      sid|buster)
+      sid|buster|artful)
         fatal_warnings=0
         ;;
     esac
