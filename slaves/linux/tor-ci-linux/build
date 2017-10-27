@@ -2,7 +2,28 @@
 set -x
 set -e
 
-configure_flags=${configure_flags:-"--enable-gcc-warnings --disable-silent-rules"}
+dn=$(dirname "$0")
+branch=${dn#*/tor-ci-linux-}
+if [ "$branch" = "$dn" ]; then
+  echo >&2 "Did not find branch from dirname $dn"
+  exit 1
+fi
+
+fatal_warnings=1
+case "$branch" in
+  0.2.8)
+    case "$SUITE" in
+      sid|buster)
+        fatal_warnings=0
+        ;;
+    esac
+    ;;
+esac
+default_flags=""
+default_flags="--disable-silent-rules"
+if [ "$fatal_warnings" -gt 0 ]; then default_flags="$default_flags --enable-gcc-warnings"; fi
+
+configure_flags=${configure_flags:-"$default_flags"}
 
 (cd tor && ./autogen.sh)
 
