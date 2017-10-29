@@ -5,8 +5,14 @@ set -e
 dn=$(dirname "$0")
 branch=${dn#*/tor-ci-linux-}
 if [ "$branch" = "$dn" ]; then
-  echo >&2 "Did not find branch from dirname $dn"
-  exit 1
+  case "$branch" in
+    stem-tor-ci-base)
+      :
+      ;;
+    *)
+      echo >&2 "Did not find branch from dirname $dn"
+      exit 1
+  esac
 fi
 
 fatal_warnings=1
