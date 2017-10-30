@@ -3,7 +3,8 @@ set -x
 set -e
 
 dn=$(dirname "$0")
-branch=${dn#*/tor-ci-linux-}
+dn=$(basename "$dn")
+branch=${dn#tor-ci-linux-}
 if [ "$branch" = "$dn" ]; then
   case "$branch" in
     stem-tor-ci-base)
