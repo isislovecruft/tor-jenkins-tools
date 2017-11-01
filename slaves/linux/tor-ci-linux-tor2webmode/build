@@ -1,3 +1,0 @@
-#!/bin/sh
-
-configure_flags="--enable-gcc-warnings --disable-silent-rules --enable-tor2web-mode" "$(dirname "$0")"/../tor-ci-linux/build
