@@ -1,10 +1,45 @@
 #!/bin/bash
 
 set -e
+set -u
 set -x
 
 dn=$(dirname "$0")
 dn="$(dirname "$dn")"
-branch=${dn#*/tor-ci-linux-}
-branch=${branch%-extra-arm}
-branch="maint-$branch" "$dn"/../tor-ci-linux-master-extra-arm/setup/02-get-source
+gitbranch0=${dn#*/tor-ci-linux-}
+gitbranch=${gitbranch0%-extra-arm}
+if [ "$gitbranch0" = "$dn" ] ||
+   [ "$gitbranch" = "$gitbranch0" ]; then
+  echo >&2 "Did not find gitbranch from dirname $dn -> $gitbranch0 -> $gitbranch)"
+  exit 1
+fi
+
+case "$gitbranch" in
+  master)
+    :
+    ;;
+  *)
+    gitbranch="maint-$gitbranch"
+    ;;
+esac
+
+
+gittree="$HOME/vcs/tor.git"
+mkdir -p "$gittree"
+
+exec 200< "$gittree"
+if ! flock -e 200; then
+  echo 2>&1 "Cannot acquire lock."
+  exit 1
+fi
+
+if [ -e "$gittree/config" ]; then
+  (cd "$gittree" && git remote update)
+else
+  git clone https://git.torproject.org/tor.git --mirror "$gittree"
+fi
+
+rm -rf tor
+git clone --shared --branch "$gitbranch" "$gittree" tor
+echo 'HEAD is revision:'
+(cd tor && git rev-parse HEAD)
