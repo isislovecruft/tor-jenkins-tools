@@ -1,3 +1,0 @@
-#!/bin/bash
-
-branch=maint-0.2.9 "$(dirname "$0")"/../../tor-ci-linux-master-extra-arm/setup/02-get-source
