@@ -1,3 +1,12 @@
 #!/bin/sh
 
-configure_flags="--enable-gcc-warnings --disable-silent-rules --enable-expensive-hardening" "$(dirname "$0")"/../tor-ci-linux/build
+dn=$(dirname "$0")
+branch0=${dn#*/tor-ci-linux-}
+branch=${branch0%-expensive-hardening}
+if [ "$branch0" = "$dn" ] ||
+   [ "$branch" = "$branch0" ]; then
+  echo >&2 "Did not find branch from dirname $dn -> $branch0 -> $branch)"
+  exit 1
+fi
+
+branch="$branch" configure_flags="--enable-gcc-warnings --disable-silent-rules --enable-expensive-hardening" "$(dirname "$0")"/../tor-ci-linux/build
