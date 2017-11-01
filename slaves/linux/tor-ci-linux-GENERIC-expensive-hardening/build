@@ -1,5 +1,9 @@
 #!/bin/sh
 
+set -e
+set -u
+set -x
+
 dn=$(dirname "$0")
 branch0=${dn#*/tor-ci-linux-}
 branch=${branch0%-expensive-hardening}
@@ -8,5 +12,7 @@ if [ "$branch0" = "$dn" ] ||
   echo >&2 "Did not find branch from dirname $dn -> $branch0 -> $branch)"
   exit 1
 fi
+
+echo "Think we are in branch $branch."
 
 branch="$branch" configure_flags="--enable-gcc-warnings --disable-silent-rules --enable-expensive-hardening" "$(dirname "$0")"/../tor-ci-linux/build

@@ -1,18 +1,19 @@
 #!/bin/sh
+
 set -x
+set -u
 set -e
 
 dn=$(dirname "$0")
 branch0=${dn#*/tor-ci-linux-}
-if [ "$branch0" = "$dn" ]; then
-  echo >&2 "Did not find branch from dirname $dn"
-  exit 1
-fi
 branch=${branch0%-extra-arm}
-if [ "$branch" = "$branch0" ]; then
-  echo >&2 "Did not find branch from branch0 $branch0"
+if [ "$branch0" = "$dn" ] ||
+   [ "$branch" = "$branch0" ]; then
+  echo >&2 "Did not find branch from dirname $dn -> $branch0 -> $branch)"
   exit 1
 fi
+
+echo "Think we are in branch $branch."
 
 fatal_warnings=1
 case "$branch" in

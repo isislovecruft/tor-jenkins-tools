@@ -18,6 +18,8 @@ if [ -z "${branch:-}" ]; then
   fi
 fi
 
+echo "Think we are in branch $branch."
+
 fatal_warnings=1
 case "$branch" in
   0.2.8)
