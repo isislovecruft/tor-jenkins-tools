@@ -2,18 +2,20 @@
 set -x
 set -e
 
-dn=$(dirname "$0")
-dn=$(basename "$dn")
-branch=${dn#tor-ci-linux-}
-if [ "$branch" = "$dn" ]; then
-  case "$branch" in
-    stem-tor-ci-base)
-      :
-      ;;
-    *)
-      echo >&2 "Did not find branch from dirname $dn"
-      exit 1
-  esac
+if [ -z "${branch:-}" ]; then
+  dn=$(dirname "$0")
+  dn=$(basename "$dn")
+  branch=${dn#tor-ci-linux-}
+  if [ "$branch" = "$dn" ]; then
+    case "$branch" in
+      stem-tor-ci-base)
+        :
+        ;;
+      *)
+        echo >&2 "Did not find branch from dirname $dn"
+        exit 1
+    esac
+  fi
 fi
 
 fatal_warnings=1
