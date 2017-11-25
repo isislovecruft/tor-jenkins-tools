@@ -6,8 +6,11 @@ devscripts
 docbook-xml
 docbook-xsl
 git
+libcap-dev
 libevent-dev
+liblzma-dev
 libssl-dev
+libzstd-dev
 quilt
 xmlto
 zlib1g-dev
