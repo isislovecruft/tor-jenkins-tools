@@ -1,11 +1,11 @@
+asciidoc
 autoconf
 automake
-libssl-dev
-zlib1g-dev
-libevent-dev
-asciidoc
 docbook-xml
 docbook-xsl
-xmlto
-libseccomp-dev
+libevent-dev
 liblzma-dev
+libseccomp-dev
+libssl-dev
+xmlto
+zlib1g-dev
