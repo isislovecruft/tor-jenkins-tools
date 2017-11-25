@@ -1,11 +1,13 @@
-quilt
+asciidoc
 autoconf
 automake
-libssl-dev
-zlib1g-dev
-libevent-dev
-asciidoc
+dctrl-tools
+devscripts
 docbook-xml
 docbook-xsl
+git
+libevent-dev
+libssl-dev
+quilt
 xmlto
-git devscripts dctrl-tools
+zlib1g-dev
