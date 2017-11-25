@@ -10,6 +10,5 @@ liblzma-dev
 libseccomp-dev
 libssl-dev
 libzstd-dev
-libzstd-dev
 xmlto
 zlib1g-dev
