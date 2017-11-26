@@ -52,7 +52,7 @@ check_arg "job's name" "${jobname:-}"
 hostname=$(hostname -f)
 if [ "$hostname" != $NODE_NAME ] ; then
 	case $NODE_NAME in
-		build-arm-0[0-3])
+		build-arm-0[0-3].torproject.org)
 			echo "Forwarding build request to $NODE_NAME."
 			set -x
 			exec ssh "$NODE_NAME" "(cd jenkins-tools && git pull) && NODE_NAME='$NODE_NAME' SUITE='$SUITE' ARCHITECTURE='$ARCHITECTURE' jenkins-tools/slaves/linux/build-wrapper"
