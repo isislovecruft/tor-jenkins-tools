@@ -31,9 +31,7 @@ if [ "$fatal_warnings" -gt 0 ]; then default_flags="$default_flags --enable-gcc-
 
 configure_flags=${configure_flags:-"$default_flags"}
 
-if [ -e ~/.tor-jenkins-makeflags ]
-  .  ~/.tor-jenkins-makeflags
-fi
+! [ -e ~/.tor-jenkins-makeflags ] || . ~/.tor-jenkins-makeflags
 
 (cd tor && ./autogen.sh)
 rm -rf build-tree-tor
