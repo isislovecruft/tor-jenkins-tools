@@ -11,6 +11,10 @@ fi
 NODE_NAME=${1:-}
 hostname=$(hostname -f)
 
+cd ~/jenkins-tools
+flock -w 30 . git pull
+cd -
+
 pidnc1=""
 pidnc2=""
 pidjenkins=""
