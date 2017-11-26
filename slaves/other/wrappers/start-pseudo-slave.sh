@@ -42,8 +42,8 @@ case "$NODE_NAME" in
 			exit 1
 		fi
 
-		#java -jar ~/slave.jar & pidjenkins=$!
-		sleep 5m & pidjenkins=$!
+		java -jar ~/slave.jar & pidjenkins=$!
+		#sleep 5m & pidjenkins=$!
 
 		rc=0
 		wait -n || rc=$?
