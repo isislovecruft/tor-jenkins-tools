@@ -13,4 +13,4 @@ elif ! [ -e "$bd" ]; then
 	exit 1
 fi
 
-dd-schroot-cmd -c "$SESSION_ID" -y -- apt-get install $(cat "$bd")
+dd-schroot-cmd -c "$SESSION_ID" -y -- apt-get install $(cat "$bd") ccache

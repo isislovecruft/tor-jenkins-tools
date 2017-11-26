@@ -105,6 +105,7 @@ f="$jobdir/setup"
 if [ -d "$f" ]; then env "${keep_env[@]}" run-parts "$f";
                 else env "${keep_env[@]}" "$f"; fi
 echo "Build:"
+keep_env+=("PATH=/usr/lib/ccache:/usr/local/bin:/usr/bin:/bin")
 f="$jobdir/build"
 if [ -d "$f" ]; then schroot --run-session --chroot "$chroot"         -- env "${keep_env[@]}" run-parts "$f";
                 else schroot --run-session --chroot "$chroot"         -- env "${keep_env[@]}" "$f"; fi
