@@ -43,11 +43,28 @@ cleanup() {
 	fi
 }
 
+check_arg "node_name" "${NODE_NAME:-}"
 check_arg "suite" "${SUITE:-}"
 check_arg "architecture" "${ARCHITECTURE:-}"
 jobname=${JOB_NAME%%/*}
 check_arg "job's name" "${jobname:-}"
 
+hostname=$(hostname -f)
+if [ "$hostname" != $NODE_NAME ] ; then
+	case $NODE_NAME in
+		build-arm-0[0-3])
+			echo "Forwarding build request to $NODE_NAME."
+			set -x
+			exec ssh "$NODE_NAME" "(cd jenkins-tools && git pull) && NODE_NAME='$NODE_NAME' SUITE='$SUITE' ARCHITECTURE='$ARCHITECTURE' jenkins-tools/slaves/linux/build-wrapper"
+			echo >&2 "Fell through exec!?"
+			exit 1
+			;;
+		*)
+			echo >&2 "Node name mismatch: We are $hostname, but NODE_NAME is $NODE_NAME."
+			exit 1
+			;;
+	esac
+fi
 
 # Check if we have an schroot by that name
 base_chroot="$SUITE-$ARCHITECTURE-sbuild"
