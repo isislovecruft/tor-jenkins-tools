@@ -8,5 +8,6 @@ libevent-dev
 liblzma-dev
 libssl-dev
 libzstd-dev
+pkg-config
 xmlto
 zlib1g-dev
