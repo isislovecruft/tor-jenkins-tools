@@ -64,6 +64,7 @@ case "$NODE_NAME" in
 
     if ! flock -x -w 10 200; then
       kill $child
+      rm -f "$lock_flag"
       echo >&2 "Could not acquire lock on flag file - probably slave ssh alive loop failed."
       exit 1
     fi
@@ -73,6 +74,7 @@ case "$NODE_NAME" in
       exit 1
     fi
 
+    rm -f "$lock_flag"
     exec java -jar ~/slave.jar
     ;;
   *)
