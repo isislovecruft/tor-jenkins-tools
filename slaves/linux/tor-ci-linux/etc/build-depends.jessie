@@ -9,7 +9,6 @@ liblzma-dev
 liblzma-dev
 libseccomp-dev
 libssl-dev
-libzstd-dev
 pkg-config
 xmlto
 zlib1g-dev
