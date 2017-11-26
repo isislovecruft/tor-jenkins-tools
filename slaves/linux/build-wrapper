@@ -55,7 +55,7 @@ if [ "$hostname" != $NODE_NAME ] ; then
 		build-arm-0[0-3].torproject.org)
 			echo "Forwarding build request to $NODE_NAME."
 			set -x
-			exec ssh "$NODE_NAME" "(cd jenkins-tools && git pull) && NODE_NAME='$NODE_NAME' SUITE='$SUITE' ARCHITECTURE='$ARCHITECTURE' jenkins-tools/slaves/linux/build-wrapper"
+			exec ssh -o BatchMode=yes "$NODE_NAME" "(cd jenkins-tools && git pull) && NODE_NAME='$NODE_NAME' SUITE='$SUITE' ARCHITECTURE='$ARCHITECTURE' jenkins-tools/slaves/linux/build-wrapper"
 			echo >&2 "Fell through exec!?"
 			exit 1
 			;;
