@@ -14,3 +14,4 @@ xmlto
 zlib1g-dev
 
 rustc
+cargo
