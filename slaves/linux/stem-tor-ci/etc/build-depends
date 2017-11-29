@@ -2,3 +2,5 @@ python pyflakes tor procps pep8
 net-tools iproute lsof sockstat
 python-mock
 man-db
+libcap2
+libzstd1
