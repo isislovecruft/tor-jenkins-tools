@@ -15,10 +15,7 @@ fi
 
 echo "Think we are in branch $branch."
 
-ls -la
-find ext-tor-rust-dependencies -ls
-
-TOR_RUST_DEPENDENCIES="$(pwd)/ext-tor-rust-dependencies/crates" \
+TOR_RUST_DEPENDENCIES="../ext-tor-rust-dependencies/crates" \
   branch="$branch" \
   configure_flags="--enable-gcc-warnings --disable-silent-rules --enable-rust" \
   "$(dirname "$0")"/../tor-ci-linux/build
