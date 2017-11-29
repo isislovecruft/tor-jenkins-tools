@@ -51,7 +51,14 @@ mkdir build-tree-tor RESULT
 (
 cd build-tree-tor
 ../tor/configure "$@"
-make -k
+make -k && rc=0 || rc=$?
+if [ "$rc" != 0 ]; then
+  echo >&2 "============================="
+  echo >&2 "make -k failed.  Re-running without -k to maybe see the error near the end of the build-log."
+  echo >&2 "============================="
+  make
+  exit $rc
+fi
 TOR_FUZZ_CORPORA=../fuzzing-corpora VERBOSE=yes make -k check
 )
 
