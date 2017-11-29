@@ -3,4 +3,5 @@ set -x
 set -e
 
 rm -rf build
+./RESULT/tor --version || ldd ./RESULT/tor
 timeout -k 5m 60m python ./run_tests.py --all --tor ./RESULT/tor --target RUN_ALL --log NOTICE
