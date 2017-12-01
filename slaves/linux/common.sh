@@ -53,6 +53,7 @@ relay_to_remote() {
 				if [ -n "$sync_to_remote" ]; then
 					echo "[$hostname] Syncing $sync_to_remote to $NODE_NAME"
 					fp=$(readlink -f ./$sync_to_remote)
+					ssh "$NODE_NAME" "mkdir -p $(dirname $fp)"
 					rsync -Pravz --delete "$fp" "$NODE_NAME:$fp"
 				fi
 				echo "[$hostname] Forwarding build request to $NODE_NAME."
