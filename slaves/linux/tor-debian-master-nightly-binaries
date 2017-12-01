@@ -9,7 +9,7 @@ basedir=$(dirname "$fullpath")
 . "$basedir/common.sh"
 
 init_args
-relay_to_remote "slaves/linux/build-wrapper"
+relay_to_remote "slaves/linux/tor-debian-master-nightly-binaries"
 
 get_metadata() {
   local dsc="$1"; shift
