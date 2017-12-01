@@ -65,6 +65,8 @@ relay_to_remote() {
 					fp=$(realpath --relative-to=/home/jenkins ./$sync_from_remote)
 					rsync -ravz --delete "$NODE_NAME:$fp/." "$sync_from_remote"
 				fi
+				echo "[$hostname] Exiting successfully."
+				exit 0
 				;;
 			*)
 				echo >&2 "Node name mismatch: We are $hostname, but NODE_NAME is $NODE_NAME."
