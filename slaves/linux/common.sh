@@ -54,7 +54,7 @@ relay_to_remote() {
 					echo "[$hostname] Syncing $sync_to_remote to $NODE_NAME"
 					fp=$(realpath --relative-to=/home/jenkins ./$sync_to_remote)
 					ssh "$NODE_NAME" "mkdir -p $(dirname $fp)"
-					rsync -Pravz --delete "$sync_to_remote" "$NODE_NAME:$fp"
+					rsync -ravz --delete "$sync_to_remote/." "$NODE_NAME:$fp"
 				fi
 				echo "[$hostname] Forwarding build request to $NODE_NAME."
 				set -x
@@ -63,7 +63,7 @@ relay_to_remote() {
 				if [ -n "$sync_from_remote" ]; then
 					echo "[$hostname] Syncing $sync_from_remote from $NODE_NAME"
 					fp=$(realpath --relative-to=/home/jenkins -f ./$sync_from_remote)
-					rsync -Pravz --delete "$NODE_NAME:$fp" "$sync_from_remote"
+					rsync -ravz --delete "$NODE_NAME:$fp/." "$sync_from_remote"
 				fi
 				;;
 			*)
