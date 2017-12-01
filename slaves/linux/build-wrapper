@@ -19,52 +19,12 @@
 set -u
 set -e
 
-check_arg() {
-	name="$1"; shift
-	arg="$1"; shift
+fullpath=$(readlink -f "$0")
+basedir=$(dirname "$fullpath")
+. "$basedir/common.sh"
 
-	if [ -z "${arg:-}" ]; then
-		echo >&2 "No $name given."
-		exit 1
-	fi
-	if [[ "$arg" =~ [^A-Za-z0-9.-] ]]; then
-		echo >&2 "Invalid $name: $arg."
-		exit 1
-	fi
-	if [[ "$arg" =~ \.\. ]]; then
-		echo >&2 "Invalid $name: $arg."
-		exit 1
-	fi
-}
-cleanup() {
-	if ! [ -z "{$chroot:-}" ]; then
-		echo "Clean up build environment."
-		schroot --end-session --chroot "$chroot"
-	fi
-}
-
-check_arg "node_name" "${NODE_NAME:-}"
-check_arg "suite" "${SUITE:-}"
-check_arg "architecture" "${ARCHITECTURE:-}"
-jobname=${JOB_NAME%%/*}
-check_arg "job's name" "${jobname:-}"
-
-hostname=$(hostname -f)
-if [ "$hostname" != $NODE_NAME ] ; then
-	case $NODE_NAME in
-		build-arm-0[0-3].torproject.org)
-			echo "[$hostname] Forwarding build request to $NODE_NAME."
-			set -x
-			exec ssh -o BatchMode=yes -tt "$NODE_NAME" "(cd jenkins-tools && git pull) && NODE_NAME='$NODE_NAME' SUITE='$SUITE' ARCHITECTURE='$ARCHITECTURE' JOB_NAME='$JOB_NAME' jenkins-tools/slaves/linux/build-wrapper"
-			echo >&2 "Fell through exec!?"
-			exit 1
-			;;
-		*)
-			echo >&2 "Node name mismatch: We are $hostname, but NODE_NAME is $NODE_NAME."
-			exit 1
-			;;
-	esac
-fi
+init_args
+relay_to_remote "slaves/linux/build-wrapper"
 
 # Check if we have an schroot by that name
 base_chroot="$SUITE-$ARCHITECTURE-sbuild"
@@ -73,8 +33,6 @@ if ! schroot -l -c "$base_chroot" > /dev/null 2>&1; then
 	exit 1
 fi
 
-fullpath=$(readlink -f "$0")
-basedir=$(dirname "$fullpath")
 jobdir="$basedir/$jobname"
 
 # And check if we have build scripts

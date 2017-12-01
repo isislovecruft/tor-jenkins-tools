@@ -4,6 +4,13 @@ set -e
 set -x
 set -u
 
+fullpath=$(readlink -f "$0")
+basedir=$(dirname "$fullpath")
+. "$basedir/common.sh"
+
+init_args
+relay_to_remote "slaves/linux/build-wrapper"
+
 get_metadata() {
   local dsc="$1"; shift
 
