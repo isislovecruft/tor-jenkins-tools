@@ -73,7 +73,7 @@ dsc=$(basename "$dsc")
 metadata=$(get_metadata "$dsc")
 read dscdist debian_version <<< "$metadata"
 
-sbuild --arch="$ARCHITECTURE" --dist="$BUILD_SUITE" --nolog --apt-update $extra "$dsc"
+sbuild --arch="$ARCHITECTURE" --dist="$BUILD_SUITE" --nolog --apt-update --add-depends=ccache $extra "$dsc"
 
 changes=$(ls -1 *.changes)
 if [ "$(echo "$changes" | wc -l)" != 1 ] || [ -z "$changes" ] ; then
