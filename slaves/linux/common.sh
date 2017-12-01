@@ -62,7 +62,7 @@ relay_to_remote() {
 				ssh -o BatchMode=yes -tt "$NODE_NAME" "(cd jenkins-tools && git pull) && cd '$fp' && NODE_NAME='$NODE_NAME' SUITE='$SUITE' ARCHITECTURE='$ARCHITECTURE' JOB_NAME='$JOB_NAME' ~/jenkins-tools/$what"
 				if [ -n "$sync_from_remote" ]; then
 					echo "[$hostname] Syncing $sync_from_remote from $NODE_NAME"
-					fp=$(realpath --relative-to=/home/jenkins -f ./$sync_from_remote)
+					fp=$(realpath --relative-to=/home/jenkins ./$sync_from_remote)
 					rsync -ravz --delete "$NODE_NAME:$fp/." "$sync_from_remote"
 				fi
 				;;
