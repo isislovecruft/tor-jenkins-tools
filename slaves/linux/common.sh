@@ -35,16 +35,34 @@ init_args() {
 relay_to_remote() {
 	local what
 	what="$1"
+	shift
+
+	local sync_to_remote
+	local sync_from_remote
+	local fp
+
+	sync_to_remote=${1:-}
+	[ "$#" -gt 0 ] && shift
+	sync_from_remote=${1:-}
+	[ "$#" -gt 0 ] && shift
 
 	hostname=$(hostname -f)
 	if [ "$hostname" != $NODE_NAME ] ; then
 		case $NODE_NAME in
 			build-arm-0[0-3].torproject.org)
+				if [ -n "$sync_to_remote" ]; then
+					echo "[$hostname] Syncing $sync_to_remote to $NODE_NAME"
+					fp=$(readlink -f ./$sync_to_remote)
+					rsync -Pravz --delete "$fp" "$NODE_NAME:$fp"
+				fi
 				echo "[$hostname] Forwarding build request to $NODE_NAME."
 				set -x
-				exec ssh -o BatchMode=yes -tt "$NODE_NAME" "(cd jenkins-tools && git pull) && NODE_NAME='$NODE_NAME' SUITE='$SUITE' ARCHITECTURE='$ARCHITECTURE' JOB_NAME='$JOB_NAME' jenkins-tools/$what"
-				echo >&2 "Fell through exec!?"
-				exit 1
+				ssh -o BatchMode=yes -tt "$NODE_NAME" "(cd jenkins-tools && git pull) && NODE_NAME='$NODE_NAME' SUITE='$SUITE' ARCHITECTURE='$ARCHITECTURE' JOB_NAME='$JOB_NAME' jenkins-tools/$what"
+				if [ -n "$sync_from_remote" ]; then
+					echo "[$hostname] Syncing $sync_from_remote from $NODE_NAME"
+					fp=$(readlink -f ./$sync_from_remote)
+					rsync -Pravz --delete "$NODE_NAME:$fp" "$fp"
+				fi
 				;;
 			*)
 				echo >&2 "Node name mismatch: We are $hostname, but NODE_NAME is $NODE_NAME."
