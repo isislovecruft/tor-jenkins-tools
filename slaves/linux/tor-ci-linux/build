@@ -50,6 +50,9 @@ mkdir build-tree-tor RESULT
 
 (
 cd build-tree-tor
+if test -n "${TOR_RUST_DEPENDENCIES}"; then
+  cp -t "$HOME" -aR src/rust/.cargo
+fi
 ../tor/configure "$@"
 make -k && rc=0 || rc=$?
 if [ "$rc" != 0 ]; then
